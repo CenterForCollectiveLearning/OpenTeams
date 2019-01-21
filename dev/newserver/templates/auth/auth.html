@@ -1,0 +1,17 @@
+{% extends "../base.html" %}
+
+{% block body %}
+<script>
+setTimeout(function() { location.reload(); }, 5000);
+</script>
+<div id="box">
+     <div class="landing_slab" style="border-top:none;">
+      <a href="/"><img class="logo" src="/static/images/logo.png"/></a>
+      <div class="landing_header">Authenticating...</div>
+  <p>Please wait while we authenticate you to the email server.</p>
+  <p>This may take up to a minute. Thank you for your patience!</p>
+  <div id="footer" style="margin-top:30px">
+    <div id="signoff">&copy; 2013 <a href="http://macroconnections.media.mit.edu">Macro Connections</a>&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;<a href="http://media.mit.edu">MIT Media Lab</a></div>
+  </div>
+</div>
+{% end %}

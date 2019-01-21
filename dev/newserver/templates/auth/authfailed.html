@@ -1,0 +1,17 @@
+{% extends "../base.html" %}
+
+{% block body %}
+<div id="box">
+     <div class="landing_slab" style="border-top:none;">
+      <a href="/"><img class="logo" src="/static/images/logo.png"/></a>
+      <div class="landing_header">Authorization failed</div>
+  <h2>Possible reasons</h2>
+  <ul style="list-style-position: inside;">
+	<li> @hotmail.com, @live.com and @outlook.com are not part of the Exchange server family and are not supported at the moment. </li>
+	<li> The email address or password you entered is incorrect. In that case, please <a href="/">login again</a>.</li>
+  </ul>
+  <div id="footer" style="margin-top:30px">
+    <div id="signoff">&copy; 2013 <a href="http://macroconnections.media.mit.edu">Macro Connections</a>&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;<a href="http://media.mit.edu">MIT Media Lab</a></div>
+  </div>
+</div>
+{% end %}

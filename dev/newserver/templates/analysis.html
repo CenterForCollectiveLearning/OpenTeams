@@ -1,0 +1,349 @@
+{% extends "v2_base_new.html" %}
+
+{% block body %}
+{% if context['exhibit'] %}
+<iframe id="myIFrame" width="0" height="0" style="display:none;"></iframe>
+{% end %}
+<!-- REQUIRED LIBS -->
+<script src="/static/js/libs/addressparser2.js"></script>
+<script src="/static/js/libs/webtoolkit.base64.js"></script>
+<script src="/static/js/libs/canvg.js"></script>
+<script src="/static/js/libs/jsnetworkx.js"></script>
+<script src="/static/js/libs/rgbcolor.js"></script>
+<script src="https://d3plus.org/js/d3.js"></script>
+<script src="https://d3plus.org/js/d3plus.js"></script>
+<script src="https://d3js.org/d3-time.v1.min.js"></script>
+
+<!-- OUR LIBS -->
+<script>
+//###### Report errors back to server ###########
+window.onerror = function (errorMsg, url, lineNumber) {
+  var data = {
+    'errorMsg': errorMsg,
+    'url': url,
+    'lineNumber': lineNumber
+  };
+  $.post('/senderror', { 'json': JSON.stringify(data) });
+  return false;
+};
+//#########################################
+
+//### fix console is undefined in IE7/8 ###
+if (!window.console) {
+  console = {log: function() {}};
+}
+//##################################
+</script>
+<!--<script src="/static/js/graph.js"></script>
+<script src="/static/js/v2_viz_new.js"></script>
+<script src="/static/js/db.js"></script>-->
+<script src="/static/js/analysis.js"></script>
+<div id="teams_logo"><img src="/static/images/basic-url-logo2_horizontal.png" alt="" height="40"></div>
+<div id="analysis_panel">
+    <div id="analysis_header">
+        <img id="histo_icon" src="/static/images/icon_histo_people.png" title="Histograms of demographic data" onclick="change_panel(0);" alt="" height="50" width="50" style="opacity: 0.7; padding: 4px;">
+        <img id="histo2_icon" src="/static/images/icon_histo_work.png" title="Histograms of work data" onclick="change_panel(1);" alt="" height="50" width="50" style="opacity: 0.7; padding: 4px;">
+        <img id="survey_icon" src="/static/images/icon_survey.png" title="Members' survey data" onclick="change_panel(2);" alt="" height="50" width="50" style="opacity: 0.7; padding: 4px;">
+<!--        <img id="table_icon" src="/static/images/icon_table.png" onclick="change_panel(0);" alt="" height="50" width="50" style="padding: 4px;">-->
+        <img id="summary_icon" src="/static/images/icon_summary.png" title="Team network metrics" onclick="change_panel(3);" alt="" height="50" width="50" style="padding: 4px;">
+        <img id="axis_icon" src="/static/images/icon_axis.png" title="Scatter plot for members' data" onclick="change_panel(4);" alt="" height="50" width="50" style="padding: 4px;">
+        <img id="curve_icon" src="/static/images/icon_curve.png" title="Communication data" onclick="change_panel(5);" alt="" height="50" width="50" style="opacity: 0.7; padding: 4px;">
+        <img id="response_time_icon" src="/static/images/icon_response_time.png" title="Response Time" onclick="change_panel(6);" alt="" height="46" width="46" style="opacity: 0.7; padding: 6px;">
+        <img id="time_pattern_icon" src="/static/images/icon_time_pattern.png" title="Email Sent Time" onclick="change_panel(7);" alt="" height="50" width="50" style="opacity: 0.7; padding: 4px;">
+    </div>
+    <div id="analysis_body">
+        <div class="views" style="display:none;">
+            <div class="alt_view" id="coord" onclick="change_subview(0);"><img id="img_coord" src="/static/images/icon_axis.png" alt="" height="34" width="34" style="opacity: 1.0; padding: 3px;"></div>
+            <div class="alt_view" id="table" onclick="change_subview(1);"><img id="img_table" src="/static/images/table_icon.png" alt="" height="34" width="34" style="opacity: 0.2; padding: 3px;"></div>
+        </div>
+        <div id="analysis_left">
+            <img src="/static/images/left_arrow_analysis.png" onclick="arrow_switch_panel(0);" alt="" height="50" width="50">
+        </div>
+        <div id="analysis_content">
+            <div id="analysis_histo_cover" style="display:block;">
+                <div id="gender_svg">
+                    <p style='font-size: 24px;'>Gender</p>
+                </div>
+                <svg id="age_svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"></svg>
+                <div id="nationality_svg">
+                    <p style='font-size: 24px;'>Nationality</p>
+                </div>
+                <div id="nationality_stacked_svg">
+                    <div style='font-size: 24px; padding-top: 28px; padding-bottom: 30px;'>Nationality by
+                        <div id="dimensionSelect" class="dropdown-check-list">
+                             <span class="anchor2">Gender</span>
+                             <ul id="dims" class="dims"></ul>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            <div id="analysis_histo_cover2" style="display:none;">
+                <div id="position_svg">
+                    <p style='font-size: 22px; margin-bottom: 15px;'>Position</p>
+                </div>
+                <div id="position_stacked_svg">
+                    <div style='font-size: 22px; padding-top: 35px; padding-bottom: 10px;'>Position by
+                        <div id="dimensionSelect_position" class="dropdown-check-list">
+                             <span class="anchor2">Gender</span>
+                             <ul id="dims_position" class="dims"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="major_svg">
+                    <p style='font-size: 22px; margin-bottom: 15px;'>Major</p>
+                </div>
+                <div id="major_stacked_svg">
+                    <div style='font-size: 22px; padding-top: 35px; padding-bottom: 10px;'><span id="major_text">College major by</span>
+                        <div id="dimensionSelect_major" class="dropdown-check-list">
+                             <span class="anchor2">Gender</span>
+                             <ul id="dims_major" class="dims"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="degree_svg">
+                    <p style='font-size: 22px; margin-bottom: 15px;'>Degree</p>
+                </div>
+                <div id="degree_stacked_svg">
+                    <div style='font-size: 22px; padding-top: 35px; padding-bottom: 10px;'>Degree by
+                        <div id="dimensionSelect_degree" class="dropdown-check-list">
+                             <span class="anchor2">Gender</span>
+                             <ul id="dims_degree" class="dims"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="analysis_survey_cover" style="display:none;">
+                <div id="select_member_survey" style="z-index:1000;">
+                    <div id="surveySelect" class="dropdown-check-list">
+                         <span class="anchor">Select members</span>
+                         <ul id="items" class="items"></ul>
+                    </div>
+                    <!-- <select id="surveySelect"></select> -->
+                </div>
+            </div>
+             <div id="analysis_summary_cover" style="display:none;">
+                <svg id="metrics_timeline_svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"></svg>
+                <div id="metrics_time_pattern_switch">
+                    <div id="by_closeness">Closeness</div>
+                    <div id="by_betweenness">Betweenness</div>
+                    <div id="by_degree">Degree</div>
+                </div>
+                <div id="centrality_svg"></div>
+                <div id="density_svg"></div>
+                
+            </div>
+            <div id="analysis_table_cover" style="display:none">
+                <div id="download_button">Download</div>
+                <table id="analysis_table" style="margin-top: 15px; line-height: 40px; width: 3200px;">
+                    <colgroup>
+                        <col style="width: 350px">
+
+                        <col style="width: 150px">
+                        <col style="width: 150px">
+                        <col style="width: 370px">
+                        <col style="width: 200px">
+                        <col style="width: 200px">
+                        <col style="width: 200px">
+                        <col style="width: 400px">
+
+                        <col style="width: 150px">
+                        <col style="width: 150px">
+                        <col style="width: 150px">
+                        <col style="width: 150px">
+                        <col style="width: 150px">
+
+                        <col style="width: 150px">
+                        <col style="width: 150px">
+                        <col style="width: 200px">
+                        <col style="width: 200px">
+                        <col style="width: 500px">
+                        <col style="width: 380px">
+                        <col style="width: 380px">
+                        <col style="width: 380px">
+                        <col style="width: 440px">
+                    </colgroup>
+                    <tr>
+                        <th class="th1"></th>
+                        <th class="th3">Degree</th>
+                        <th class="th4">Betweenness</th>
+                        <th class="th5">Open-Mindedness</th>
+                        <th class="th6">Conscientiousness</th>
+                        <th class="th7">Extraversion</th>
+                        <th class="th8">Agreeableness</th>
+                        <th class="th9">Negative Emotionality</th>
+                        <th class="th10">Fairness</th>
+                        <th class="th11">Harm</th>
+                        <th class="th12">Loyalty</th>
+                        <th class="th13">Authority</th>
+                        <th class="th14">Purity</th>
+                        <th class="th10">Age</th>
+                        <th class="th11">Gender</th>
+                        <th class="th12">Nationality</th>
+                        <th class="th13">Ethnicity</th>
+                        <th class="th14">Languages</th>
+                        <th class="th15">College Major</th>
+                        <th class="th16">Graduate Major</th>
+                        <th class="th17">Academic Degree</th>
+                        <th class="th18">Position</th>
+                    </tr>
+                </table>
+            </div>
+            <div id="analysis_personality_svg_cover" style="display:none">
+                <div id="personality_control">
+                    <span style="padding-left: 2%;">X-axis:</span>
+                    <select id="xSelect"></select>
+                    <!-- <br> -->
+                    <div id="x_scale" class="scale_method">
+                        <div id="by_linear">Linear</div>
+                        <div id="by_log">Log</div>
+                    </div>
+                    <br>
+                    <span style="padding-left: 2%;">Y-axis:</span>
+                    <select id="ySelect"></select>
+                    <!-- <br> -->
+                    <div id="y_scale" class="scale_method">
+                        <div id="by_linear">Linear</div>
+                        <div id="by_log">Log</div>
+                    </div>
+                    <br>
+                    <div id="div_color">
+                        <span>Color</span><br>
+                        <select id="colorSelect"></select>
+                        <svg id="legend_color" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"></svg>
+                    </div>
+                    <div id="div_size">
+                        <span>Size</span><br>
+                        <select id="sizeSelect"></select>
+                        <svg id="legend_size" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"></svg>
+                    </div>
+                    <br>
+                    <br>
+                    <span class="context_for_axis" id="context_for_x"></span><br>
+                    <span class="context_for_axis" id="context_for_y"></span><br>
+                    <span class="context_for_axis" id="context_for_color"></span><br>
+                    <span class="context_for_axis" id="context_for_size"></span>
+                </div>
+                <svg id="analysis_personality_svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"></svg>
+            </div>
+            <div id="analysis_pairs_cover" style="display:none">
+                <div id="select_member">
+                    Emails between 
+                    <select id="p1Select"></select>
+                    and
+                    <select id="p2Select"></select>
+                </div>
+                <svg id="timeline_svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"></svg>
+                <div id="pairs_time_scale">
+                    <div id="pairs_time_linear">Linear</div>
+                    <div id="pairs_time_log">Log</div>
+                </div>
+                <div id="restore_button">Restore</div>
+                <svg id="analysis_pairs_svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"></svg>
+                <!-- <div id="analysis_pairs_svg"></div> -->
+                <div id="stacked_cover"></div>
+                <div id="select_mode">
+                    <div id="by_value">Value</div>
+                    <div id="by_share">Share</div>
+                </div>
+                <!-- <div id="sendTime_stacked_cover"></div>
+                <div id="sendTime2_stacked_cover"></div> -->
+            </div>
+            <div id="analysis_response_time_cover" style="display:none;">
+                <svg id="analysis_response_time_svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"></svg>
+                <div id="time_scale">
+                    <div id="time_linear">Linear</div>
+                    <div id="time_log">Log</div>
+                </div>
+            </div>
+            <div id="analysis_time_pattern_cover" style="display:none;">
+                <div id="time_pattern_svg"></div>
+                <svg id="senttime_timeline_svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"></svg>
+                <div id="time_pattern_switch">
+                    <div id="by_hour">Hours</div>
+                    <div id="by_day">Days</div>
+                </div>
+                <div id="time_scale_switch">
+                    <div id="by_real_value">Count</div>
+                    <div id="by_normalized_value">Count per day</div>
+                    <div id="by_percentage">Percentage</div>
+                </div>
+            </div>
+        </div>
+        <div id="analysis_right">
+            <img src="/static/images/right_arrow_analysis.png" onclick="arrow_switch_panel(1);" alt="" height="50" width="50">
+        </div>
+    </div>
+</div>
+<div id="time_tooltip">
+    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Response to: </span><span id="to_name" style="font-weight: 300;"></span><br>
+    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Email count: </span><span id="to_count" style="font-weight: 300;"></span><br>
+    <span>Median response time: </span><span id="ave" style="font-weight: 300;"></span><span style="font-weight: 300;"> mins</span>
+</div>
+<div id="timeave_tooltip">
+    <span id="to_name"></span>
+    <span>'s median response time: </span><span id="ave"></span><span> mins</span>
+</div>
+<div id="tooltip" style="display:none;">
+    <div id="tooltip_names">
+        <div id="himher_name"></div>
+        <div id="pair_name"></div>
+    </div>
+    <div id="tooltip_buttons">
+        <div id="only_himher">Highlight</div>
+        <div id="only_this_pair">Highlight</div>
+    </div>
+</div>
+<div id="footer_analysis">
+    <div id="signoff">&copy; 2017 <a href="http://macroconnections.media.mit.edu">Collective Learning</a>&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;<a href="http://media.mit.edu">MIT Media Lab</a></div>
+</div>
+
+<script>
+String.prototype.toTitleCase = function () {
+    var smallWords = /^(a|an|and|as|at|but|by|en|for|if|in|of|on|or|the|to|vs?\.?|via)$/i;
+
+    return this.replace(/([^\W_]+[^\s-]*) */g, function (match, p1, index, title) {
+        if (index > 0 && index + p1.length !== title.length && p1.search(smallWords) > -1 && title.charAt(index - 2) !== ":" && title.charAt(index - 1).search(/[^\s-]/) < 0) {
+            return match.toLowerCase();
+        }
+
+        if (p1.substr(1).search(/[A-Z]|\../) > -1) {
+            return match;
+        }
+
+        return match.charAt(0).toUpperCase() + match.substr(1);
+    });
+};
+
+function htmlDecode(value) {
+  return $('<div/>').html(value).text();
+}
+var usersinfo = JSON.parse(htmlDecode("{{usersinfo}}"));
+for(var i = 0; i < usersinfo.length; i++){
+    var person_name = [""];
+    if (usersinfo[i]['name'] !== undefined) {
+        person_name = usersinfo[i]['name'].split(/\s+/);
+    }
+    if (person_name.length === 1) {
+        usersinfo[i]['name'] = person_name[0].trim().toTitleCase();
+    } else {
+        usersinfo[i]['name'] = person_name[0].trim().toTitleCase() + " " + person_name[person_name.length - 1].trim().toTitleCase();
+    }
+}
+
+var personalities = JSON.parse(htmlDecode("{{personalities}}"));
+var moralities = JSON.parse(htmlDecode("{{moralities}}"));
+var demographics = JSON.parse(htmlDecode("{{demographics}}"));
+var centralities = JSON.parse(htmlDecode("{{centralities}}"));
+var pairs = JSON.parse(htmlDecode("{{pairs}}"));
+var gap = JSON.parse(htmlDecode("{{gap}}"));
+var team_id = htmlDecode("{{team_id}}");
+var demo = htmlDecode("{{demo}}");
+var emailSentTime = JSON.parse(htmlDecode("{{emailSentTime}}"));
+var responseTime = JSON.parse(htmlDecode("{{responseTime}}"));
+var metrics = JSON.parse(htmlDecode("{{metrics}}"));
+
+
+</script>
+
+{% end %}

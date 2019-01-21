@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+<script src="/static/js/libs/Blob.js"></script>
+<script src="/static/js/libs/canvas-toBlob.js"></script>
+<script src="/static/js/libs/FileSaver.js"></script>
+<script src="/static/js/libs/FileSaver.js"></script>
+<script src="/static/js/libs/jquery-1.9.1.min.js"></script>
+</head>
+<body>
+<script>
+var state = null;
+//get the state
+$.ajax({
+	    dataType: "json",
+	    url: "/getstate",
+	    type: 'GET',
+	    async: false,
+	    success: function (response) { state = response; },
+	    error: function (jqXHR, textStatus, errorThrown) { console.log(textStatus);}
+	});
+var versions_done = 0;
+var allemails = [];
+for(var i=0; i<=state.version; i++) {
+  $.ajax({
+  	cache: true,
+    dataType: "json",
+    url: "/getemails/" + i,
+    type: 'GET',
+	complete: function() {
+      versions_done++;
+      console.log('Downloading emails to browser.. ' + Math.floor((100*versions_done)/(state.version+1)) + "%");
+      if(versions_done === state.version + 1) {
+        var a = JSON.stringify([{name: 'Daniel', surname : 'Smilkov'},{name: 'Daniel', surname : 'Smilkov'}]);
+        var blob = new Blob([JSON.stringify(allemails)], {type: "text/plain;charset=utf-8"});
+        saveAs(blob, "allemails.json");
+      }
+    },
+    success: function(emails) {allemails = allemails.concat(emails);}
+  });
+}
+</script>
+</body>
+</html>

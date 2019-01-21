@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div id="box">
+     <div class="landing_slab" style="border-top:none;">
+      <a href="/"><img class="logo" src="/static/images/logo.png"/></a>
+      <div class="landing_header">Thank you for using Immersion!</div>
+      <div id="logout_inner">
+        <div class="logout_child">You have logged out of Immersion and <strong>your metadata has been saved</strong>.</div>
+        <br/>
+        <div class="logout_child">The next time you log in, Immersion will only need to fetch the latest metadata.</div>
+        <div class="logout_child">If you want to delete your metadata in the future, log back into Immersion and select the <strong>Log out &amp; Delete</strong> option.</div>
+        
+        <div class="logout_child"><strong>Gmail users:</strong> To revoke Immersion's access to your Gmail account visit <a href="https://accounts.google.com/IssuedAuthSubTokens" target="_blank">Google Account settings</a>. <br/>
+          If you revoke access, you will need to re-authorize Immersion the next time you log in.
+        <br/>
+        <br/>
+        <div class="logout_child"><a href="/">Go back to Immersion homepage</a></div> <br/>
+        
+        <div class="logout_child"><span style="font-style:normal; font-weight:bold">Interested in other projects? </span>  Help us map urban perception: <a href="http://pulse.media.mit.edu">Place Pulse</a></div>
+        <a href="http://pulse.media.mit.edu"><img style="width:400px;border:3px solid rgb(255, 121, 103);" src="/static/images/placepulse.png" /><a/>
+      </div>
+    </div>
+
+    <div id="footer">
+      <div id="signoff">&copy; 2013 <a href="http://macroconnections.media.mit.edu">Macro Connections</a>&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;<a href="http://media.mit.edu">MIT Media Lab</a></div>
+    </div>
+</div>
+
+{% end %}

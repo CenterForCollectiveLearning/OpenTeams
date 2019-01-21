@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div id="box">
+     <div class="landing_slab" style="border-top:none;">
+      <a href="/"><img class="logo" src="/static/images/logo.png"/></a>
+      <div id="decision_header" class="landing_header">
+        What would you like to do with your metadata?
+        </br>
+        <!--<p style="font-size: 15px; margin-bottom:0px;margin-top:20px;">We understand if you feel the need to delete your metadata due to privacy concerns, <br>but we would be very grateful if you decided to contribute to our research efforts by saving your anonymized metadata.</p>-->
+      </div>
+        <div id="choices">
+          <div class="choice_pillar">
+              <div class="choice_num">option 1</div>
+              <a id="choice_delete" class="choice_button">DELETE METADATA</br><span style="font-size:12px; color: #c6c6c6;">(don't use my metadata for anything)</span></a>
+              <div class="benefits">
+                <ul class="benefits_points">
+                  <li>Your email metadata will be <b>deleted immediately</b> from the Immersion server.</li>
+                  <li>The developers of Immersion will no longer have access to your metadata unless you authorize to fetch your email metadata again during your next login.</li>
+                  <li>This does not in any way affect data stored by your original email provider (eg: on Gmail, Yahoo!, Exchange, etc).</li>
+                  <li>The next time you login to Immersion, it will have to fetch your email metadata all over again.</li>
+                  <li>Immersion will not be able to provide you with benchmark statistics of your email usage relative to other users.</li>
+                </ul>
+              </div>
+          </div>
+          <div class="choice_pillar">
+            <div class="choice_num">option 2</div>
+            <a id="choice_consent" class="choice_button">CONSENT FOR THE STUDY</br><span style="font-size:12px; color: #c6c6c6;">(contribute to science!)</span></a>
+            <div class="benefits">
+                <ul class="benefits_points">
+                  <li>Your email metadata will be <b>anonymized and saved</b> on the Immersion server.</li>
+                  <li>The anonymized data will be used for scientific research purposes. This will be a valuable resource for us to design and build future experiments with email.</li>
+                  <li>All researchers using any/all of the anonymized metadata are certified for Human Subjects Research by MIT's Institutional Review Board (COUHES).</li>
+                  <li>You can get early access to our future projects and you will hear from us about possible opportunities to be involved more deeply as research participants.</li>
+                </ul>
+              </div>
+          </div>
+          <div class="choice_pillar">
+              <div class="choice_num">option 3</div>
+              <a id="choice_retain" class="choice_button">RETAIN METADATA</br><span style="font-size:12px; color: #c6c6c6;">(but not participate in study)</span></a>
+              <div class="benefits">
+                <ul class="benefits_points">
+                  <li>Your email metadata will be <b>retained</b> on the Immersion server.</li>
+                  <li>At your next login, Immersion will only need to fetch the metadata for the new set of emails since your previous login, making it load much faster.</li>
+                  <li>You will not be contributing your metadata towards our research efforts.</li>
+                  <li>You can delete your metadata anytime you wish to, during the logout process in Immersion.</li>
+                </ul>
+              </div>
+          </div>
+        </div>
+        <div style="clear:both; padding-top: 20px; padding-bottom:20px;">Questions? Email us: <br><b>immersion </b>@ <b>media </b>[dot] <b>mit </b>[dot] <b>edu</b></div>
+        <div id="decision">
+
+        </div>
+    <div id="footer">
+      <div id="signoff">&copy; 2013 <a href="http://macroconnections.media.mit.edu">Macro Connections</a>&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;<a href="http://media.mit.edu">MIT Media Lab</a></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+  function informServer(decision) {
+    //ajax req, success callback
+    $("#choices").hide();
+    if(decision == 0) {
+      $("#decision_header").html('Your email metadata has been deleted from Immersion.');
+    }
+    else if(decision == 1) {
+      $("#decision_header").html('Thank you for your consent to participate in our research!');
+    }
+    else if(decision == 2) {
+      $("#decision_header").html('Your metadata will be retained on Immersion.');
+    }
+  }
+
+  $("#choice_delete").click(function() {
+    informServer(0);
+  });
+  $("#choice_consent").click(function() {
+    informServer(1);
+  });
+  $("#choice_retain").click(function() {
+    informServer(2);
+  });
+</script>
+
+{% end %}

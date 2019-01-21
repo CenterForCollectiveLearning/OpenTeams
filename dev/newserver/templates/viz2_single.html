@@ -1,0 +1,1206 @@
+{% extends "base_new0.html" %}
+
+{% block body %}
+{% if context['exhibit'] %}
+<iframe id="myIFrame" width="0" height="0" style="display:none;"></iframe>
+{% end %}
+<!-- REQUIRED LIBS -->
+<script src="/static/js/libs/addressparser2.js"></script>
+<script src="/static/js/libs/webtoolkit.base64.js"></script>
+<script src="/static/js/libs/canvg.js"></script>
+<script src="/static/js/libs/jsnetworkx.js"></script>
+<script src="/static/js/libs/rgbcolor.js"></script>
+<script src="/static/js/libs/survey.jquery.min.js"></script>
+
+<!-- OUR LIBS -->
+<script>
+//###### Report errors back to server ###########
+window.onerror = function (errorMsg, url, lineNumber) {
+  var data = {
+    'errorMsg': errorMsg,
+    'url': url,
+    'lineNumber': lineNumber
+  };
+  $.post('/senderror', { 'json': JSON.stringify(data) });
+  return false;
+};
+//#########################################
+
+//### fix console is undefined in IE7/8 ###
+if (!window.console) {
+  console = {log: function() {}};
+}
+//##################################
+</script>
+<script src="/static/js/graph.js"></script>
+<script src="/static/js/viz_new.js"></script>
+<script src="/static/js/db.js"></script>
+<script src="/static/js/app_multi_new_study0.js"></script>
+
+<div id="settings" style="display:none;">
+    <img id="settings_close" src="/static/images/white_close.png" onclick="VMail.App.show_settings(0);" alt="" height="30" width="30">
+    <img id="settings_back" src="/static/images/white_back.png" onclick="VMail.App.show_settings(-1);" alt="" height="30" width="30" style="display:none;">
+    <div id="settings_panel">
+      <div id="setting_teams">
+        <div class="setting_title">
+            My Teams
+            <div id="merge_button">Merge</div>
+            <div id="merge_selection" style="display: none;">
+                <div id="merge_continue">Continue</div>
+                <div id="merge_cancel">Cancel</div>
+            </div>
+        </div>    
+      </div>
+      <!-- <div id="setting_surveys">
+        <div class="setting_title">Surveys</div>
+        <div class="tests" id="demographic_test" onclick="VMail.App.show_test(0);">Demographic Survey</div>
+        <div class="tests" id="personality_test" onclick="VMail.App.show_test(1);">The Big Five Personality Test</div>
+        <div class="tests" id="morality_test" onclick="VMail.App.show_test(2);">Moral Foundations Questionnaire</div>
+      </div> -->
+    </div>
+    <!-- <input id="sq_118i_substitute" class placeholder="Search Box" type="text" style="display: none; width: 515px;">
+    <div id="study_questions_inner3" style="display:none;"></div>
+    <div id="study_questions_inner" style="display:none;"></div>
+    <div id="study_questions_inner2" style="display:none;"></div>
+    <div id="results" style="display:none;">
+      <table class="tg" style="table-layout: fixed; width: 938px; margin: auto; margin-top: 250px;">
+        <colgroup>
+        <col style="width: 181px">
+        <col style="width: 380px">
+        <col style="width: 225px">
+        <col style="width: 152px">
+        </colgroup>
+          <tr>
+            <th class="tg-0ord"></th>
+            <th class="tg-s6z2">Your Results</th>
+            <th class="tg-yw4l"></th>
+            <th class="tg-baqh">Percentile</th>
+          </tr>
+          <tr>
+            <td class="tg-0ord">Closed-Minded</td>
+            <td class="tg-s6z2">
+                <img src="/static/images/results_bar.png" alt="" height="2" width="380">
+                <img id="round" src="/static/images/results_circle.png" alt="" height="16" width="16">
+            </td>
+            <td class="tg-yw4l">Open to New Experiences</td>
+            <td class="tg-baqh">0</td>
+          </tr>
+          <tr>
+            <td class="tg-0ord">Disorganized</td>
+            <td class="tg-s6z2">
+                <img src="/static/images/results_bar.png" alt="" height="2" width="380">
+                <img id="round" src="/static/images/results_circle.png" alt="" height="16" width="16">
+            </td>
+            <td class="tg-yw4l">Conscientious</td>
+            <td class="tg-baqh">0</td>
+          </tr>
+          <tr>
+            <td class="tg-0ord">Introverted</td>
+            <td class="tg-s6z2">
+                <img src="/static/images/results_bar.png" alt="" height="2" width="380">
+                <img id="round" src="/static/images/results_circle.png" alt="" height="16" width="16">
+            </td>
+            <td class="tg-yw4l">Extraverted</td>
+            <td class="tg-baqh">0</td>
+          </tr>
+          <tr>
+            <td class="tg-0ord">Disagreeable</td>
+            <td class="tg-s6z2">
+                <img src="/static/images/results_bar.png" alt="" height="2" width="380">
+                <img id="round" src="/static/images/results_circle.png" alt="" height="16" width="16">
+            </td>
+            <td class="tg-yw4l">Agreeable</td>
+            <td class="tg-baqh">0</td>
+          </tr>
+          <tr>
+            <td class="tg-0ord">Calm/Relaxed</td>
+            <td class="tg-s6z2">
+                <img src="/static/images/results_bar.png" alt="" height="2" width="380">
+                <img id="round" src="/static/images/results_circle.png" alt="" height="16" width="16">
+            </td>
+            <td class="tg-yw4l">Nervous/High-Strung</td>
+            <td class="tg-baqh">0</td>
+          </tr>
+        </table>
+        
+    </div>
+    <div id="results_morality" style="display:none;">
+      <svg id="morality_histo"></svg>
+    </div>
+    <div id="results_demographic" style="display:none;"></div>
+    <div id="sources" style="display:none;">Source: <a href=""></a></div> -->
+</div>
+
+<div id="surveys" style="display:none;">
+    <img id="surveys_close" src="/static/images/white_close.png" onclick="VMail.App.show_surveys(0);" alt="" height="30" width="30">
+    <img id="surveys_back" src="/static/images/white_back.png" onclick="VMail.App.show_surveys(-1);" alt="" height="30" width="30" style="display:none;">
+    <div id="surveys_panel">
+      <div id="setting_surveys">
+        <div class="setting_title">Surveys</div>
+        <div class="tests" id="demographic_test" onclick="VMail.App.show_test(0);">Demographic Survey</div>
+        <div class="tests" id="personality_test" onclick="VMail.App.show_test(1);">The Big Five Personality Test</div>
+        <div class="tests" id="morality_test" onclick="VMail.App.show_test(2);">Moral Foundations Questionnaire</div>
+      </div>
+    </div>
+    <input id="sq_119i_substitute" class placeholder="Search Box" type="text" style="display: none; width: 515px;">
+    <div id="study_questions_inner3" style="display:none;"></div>
+    <div id="study_questions_inner" style="display:none;"></div>
+    <div id="study_questions_inner2" style="display:none;"></div>
+    <div id="results" style="display:none;">
+      <table class="tg" style="table-layout: fixed; width: 938px; margin: auto; margin-top: 250px;">
+        <colgroup>
+        <col style="width: 181px">
+        <col style="width: 380px">
+        <col style="width: 225px">
+        <col style="width: 152px">
+        </colgroup>
+          <tr>
+            <th class="tg-0ord"></th>
+            <th class="tg-s6z2">Your Results</th>
+            <th class="tg-yw4l"></th>
+            <th class="tg-baqh">Percentile</th>
+          </tr>
+          <tr>
+            <td class="tg-0ord">Closed-Minded</td>
+            <td class="tg-s6z2">
+                <img src="/static/images/results_bar.png" alt="" height="2" width="380">
+                <img id="round" src="/static/images/results_circle.png" alt="" height="16" width="16">
+            </td>
+            <td class="tg-yw4l">Open to New Experiences</td>
+            <td class="tg-baqh">0</td>
+          </tr>
+          <tr>
+            <td class="tg-0ord">Disorganized</td>
+            <td class="tg-s6z2">
+                <img src="/static/images/results_bar.png" alt="" height="2" width="380">
+                <img id="round" src="/static/images/results_circle.png" alt="" height="16" width="16">
+            </td>
+            <td class="tg-yw4l">Conscientious</td>
+            <td class="tg-baqh">0</td>
+          </tr>
+          <tr>
+            <td class="tg-0ord">Introverted</td>
+            <td class="tg-s6z2">
+                <img src="/static/images/results_bar.png" alt="" height="2" width="380">
+                <img id="round" src="/static/images/results_circle.png" alt="" height="16" width="16">
+            </td>
+            <td class="tg-yw4l">Extraverted</td>
+            <td class="tg-baqh">0</td>
+          </tr>
+          <tr>
+            <td class="tg-0ord">Disagreeable</td>
+            <td class="tg-s6z2">
+                <img src="/static/images/results_bar.png" alt="" height="2" width="380">
+                <img id="round" src="/static/images/results_circle.png" alt="" height="16" width="16">
+            </td>
+            <td class="tg-yw4l">Agreeable</td>
+            <td class="tg-baqh">0</td>
+          </tr>
+          <tr>
+            <td class="tg-0ord">Calm/Relaxed</td>
+            <td class="tg-s6z2">
+                <img src="/static/images/results_bar.png" alt="" height="2" width="380">
+                <img id="round" src="/static/images/results_circle.png" alt="" height="16" width="16">
+            </td>
+            <td class="tg-yw4l">Nervous/High-Strung</td>
+            <td class="tg-baqh">0</td>
+          </tr>
+        </table>
+        
+    </div>
+    <div id="results_morality" style="display:none;">
+      <svg id="morality_histo"></svg>
+    </div>
+    <div id="results_demographic" style="display:none; padding-top: 50px; text-align: center; font-size: 26px;">Thanks for completing the demographic survey</div>
+    <div id="sources" style="display:none;">Source: <a href=""></a></div>
+</div>
+
+<div id="loader">Collecting metadata...</div>
+
+<div id="runway" style="display:none;text-align:center;margin:0 auto 0 auto;width:500px;">
+    <img id="user_pic" class="runway_item"></img>
+    <div id="user_name" class="runway_item"></div>
+    <div id="user_email" class="runway_item"></div>
+    <div id="user_totalemails" class="runway_item"></div>
+    <div id="user_fetchedcount" class="runway_item"></div>
+    <div id="user_queue" class="runway_item"></div>
+</div>
+
+<div id="greetings" style="display:none;padding-left: 40px;">
+  <div class="landing_slab">
+    <div class="landing_header">Collecting metadata...</div>
+    <div id="logout_inner">
+      <div>Please wait while we're collecting your metadata.</div>
+      <br/>
+      <div style="font-size:20px;">Approx. wait time: <strong>{{waittime}} min.</strong></div>
+      <br/>
+      <div>This page will refresh every 10 seconds.</div>
+
+      
+    </div>
+  </div>
+
+    <div id="footer">
+      <div id="signoff">&copy; 2017 <a href="http://macroconnections.media.mit.edu">Collective Learning</a>&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;<a href="http://media.mit.edu">MIT Media Lab</a></div>
+    </div>
+</div>
+<!--<div id="logout">
+      {% if studyid == 0 %}
+      <a id="logout_save" href="#">log out <i><b>&amp; save</b></i></a> •
+      <a id="logout_delete" href="#">log out <i><b>&amp; delete</b></i></a>
+      {% else %}
+      <a id="logout_save" href="#">log out</a>
+      {% end %}
+      
+</div>-->
+<div id="rightlogout">
+  <div id="top_logout">Log out</div>
+  <div id="settings_button" onclick="VMail.App.show_settings(1);">Settings</div>
+  <div id="surveys_button" onclick="VMail.App.show_surveys(1);">Surveys</div>
+  <div id="logout_tooltip" style="display:none;">
+    <a id="logout_save" href="#">Log out <b>&amp; save</b></a>
+    <a id="logout_delete" href="#">Log out <b>&amp; delete</b></a>
+  </div>
+</div>
+<div id="data" style="display:none">
+  <div class="column" id="centercolumn">
+    <div><svg id="network" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"></svg></div>
+    <canvas id="networkcanvas" style="display:none;"></canvas>
+    <div id="timeline">
+      <div id="slider-timeslice">
+        <div id="slider-duration"></div>
+        <div id="slider_calendar">
+            <img id="calendar" src="/static/images/calendar.png">
+            <div id="slider-text"></div>
+        </div>
+      </div>
+      <div id="timeperiods">
+        <a id="slider-all" class="timechoice" href="#">All</a> | <a id="slider-ytd" class="timechoice" href="#">Past Year</a> | <a id="slider-pastmonth" class="timechoice" href="#">Past Month</a> | <a id="slider-pastweek" class="timechoice" href="#">Past Week</a>
+      </div>
+      <div id="play_timeline" style="display: none;"><img id="play_button" src="/static/images/play_button.png"></div>
+      <div id="slider-range"></div>
+    </div>
+    <!--<div id="slider-range"></div>-->
+  </div>
+
+  <div class="column" id="leftcolumn">
+    <div id="searchbox" class="ui-widget">
+      <!--<label for="searchContacts" class="heading2">Lookup Contacts </label>-->
+      <!--<br/>-->
+      <input id="searchContacts" placeholder="Lookup Contacts"/>
+      <img id="searchButton" src="/static/images/search-icon.png">
+    </div>
+    <div id="network-controls">
+      <table>
+        <tr>
+          <td class="leftcell">Charge</td>
+          <td class="rightcell">
+              <table style="width:100%;">
+                <tr>
+                  <td><div id="minus" onclick="VMail.App.charge_minus()">-</div></td>
+                  <td style="width:90%;"><div id="slider-charge"></div></td>
+                  <td><div id="plus" onclick="VMail.App.charge_plus()">+</div></td>
+                </tr>
+              </table>
+          </td>
+        </tr>
+        <tr>
+          <td class="leftcell">Nodes</td>
+          <td class="rightcell">
+            <table style="width:100%;">
+              <tr>
+                <td><div id="minus" onclick="VMail.App.nodes_minus()">-</div></td>
+                <td>0</td><!--<td>[A]</td>-->
+                <td style="width:90%;"><div id="slider-nodes"></div></td>
+                <td id="node_max">[A]</td><!--<td>[S]</td>-->
+                <td><div id="plus" onclick="VMail.App.nodes_plus()">+</div></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td class="leftcell">Links</td>
+          <td class="rightcell">
+            <table style="width:100%;">
+              <tr>
+                <td><div id="minus" onclick="VMail.App.links_minus()">-</div></td>
+                <td style="width:90%;"><div id="slider-links"></div></td>
+                <td><div id="plus" onclick="VMail.App.links_plus()">+</div></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div id="org_or_person">
+      <div class="heading2">Nodes</div>
+      <div class="radio-wrapper">
+        <form>
+        <input type="radio" name="event" class="radio_orgs" id="radio-orgs" />
+        <label for="radio-orgs" onclick="VMail.App.org_or_person(true, false);">Orgs</label>
+        <input type="radio" name="event" class="radio_contacts" checked id="radio-contacts" />
+        <label for="radio-contacts" onclick="VMail.App.org_or_person(false, true);">Contacts</label>
+        </form>
+      </div>
+      <!--<a href="#" id="as_orgs" onclick="VMail.App.org_or_person(true, false);">Orgs</a>   <a id="as_people" href="#" onclick="VMail.App.org_or_person(false, true);">People</a>-->
+    </div>
+    <!-- <div id="see_members">
+      <div class="heading2">See</div>
+      <div class="radio-wrapper">
+        <form>
+        <input type="radio" name="event" class="radio_members" id="radio-members" />
+        <label for="radio-members" onclick="VMail.App.see_members(true, false, false);">Members</label>
+        <input type="radio" name="event" class="radio_all" checked id="radio-all" />
+        <label for="radio-all" onclick="VMail.App.see_members(false, false, true);">All</label>
+        <input type="radio" name="event" class="radio_shared" id="radio-shared" />
+        <label for="radio-shared" onclick="VMail.App.see_members(false, true, false);">Shared</label>
+        </form>
+      </div>
+    </div> -->
+    <!-- <div id="color_method">
+      <div class="heading2">Color by</div>
+      <div class="radio-wrapper">
+        <form>
+        <input type="radio" name="event" class="radio_community" id="radio-community" />
+        <label for="radio-community" onclick="VMail.App.color_method(true, false, -1);">Community</label>
+        <input type="radio" name="event" class="radio_member" checked id="radio-member" />
+        <label for="radio-member" onclick="VMail.App.color_method(false, true, -1);">Member</label>
+        </form>
+      </div>
+    </div> -->
+    <div id="snapshot_holder">
+        <div class="heading2">Snapshots</div>
+        <img id="email_net_link" src="/static/images/snapshots.png">
+    </div>
+    <div id="feedback_module">
+      <div class="heading2">Feedback?</div>
+      <a id="compose" href="#" onclick="feedback_action();"></a>
+      <img id="compose_write" src="/static/images/write.png" style="display:block" onclick="feedback_action();">
+      <form id="feedback_form">
+        <textarea id="feedback_text" rows="5" cols="20"></textarea><br>
+        <input type="submit" value="Send">
+      </form>
+    </div>
+  </div>
+  <div class="column" id="rightcolumn">
+    <div id="userinfopanel">
+      <div id="name" class="person_name"></div>
+      <div class="leftstack">
+        <img id="userpic" class="userpic_circle"/>
+      </div>
+      <div class="leftstack">
+        <div class="infolevel2" id="ncontacts"></div>
+        <div class="infolevel2" id="totalemails"></div>
+      </div>
+      <div class="infolevel3">
+          <a href="#" id="my_stats" onclick="VMail.App.toggleinfo(true, false);" class="selectedlink">My Stats</a>   <a id="top_collaborators" href="#" onclick="VMail.App.toggleinfo(false, true);">Top Collaborators</a>
+        </div>
+    </div>
+    <br/>
+    <div id="rankings" style="display:none">
+      <!--<div style='margin-bottom:4px;'><b>Top 15 collaborators</b></div>-->
+      <div class="rankingschoice">
+        <a href="#" id="allTimesLink">All-time</a>    <a id="thisYearLink" href="#">Within time-range</a>
+      </div>
+      <div id="rankings-content"></div>
+    </div>
+
+    <div id="user_stats" class="histograms_container" style="display:none">
+
+    </div>
+
+    <div id="contactDetails" class="histograms_container" style="display:none">
+      <div id="contactDetails-content"></div>
+    </div>
+    
+    <div id="right_header">
+      <a href="#" id="members" onclick="VMail.App.toggleMemberStats(true, false, false);">Members</a>  
+      <a id="stats" href="#" onclick="VMail.App.toggleMemberStats(false, true, false);">Stats</a>
+      <!--<a id="paths" href="#" onclick="VMail.App.toggleMemberStats(false, false, true);">Connect</a>-->
+    </div>
+    
+    <div id="we_lost_them" style="display:none"></div>
+    <br/>
+    <div id="influence_ranking" style="display:none"></div>
+    
+    <div id="selectNodes" class="for_paths" style="display:none">Please select two nodes from the network</div>
+    <div id="first_node" class="for_paths" style="display:none">1&nbsp&nbsp</div>
+    <div id="second_node" class="for_paths" style="display:none">2&nbsp&nbsp</div>
+    <div id="list_paths" class="for_paths" style="display:none"></div>
+    
+  </div>
+  <div id="panel">
+      <div id="panel_left" style="display:none">
+          <img id="panel_img" src="/static/images/arrow_left.png" />
+      </div>
+      <div id="panel_right" style="display:none">
+          <div id="ana_stats" class="histograms_container" style="display:block"></div>
+      </div>
+  </div>
+  <!-- AddThis Button BEGIN -->
+    <div id="socialstuff" class="addthis_toolbox addthis_default_style addthis_32x32_style">
+      <a class="addthis_button_facebook"></a>
+      <a class="addthis_button_twitter"></a>
+      <a class="addthis_button_google_plusone_share"></a>
+      <a class="addthis_button_linkedin"></a>
+    </div>
+  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=undefined"></script>
+  <!-- AddThis Button END -->
+</div>
+
+<script>
+//for personality test
+var json = 
+    {title: "The Big Five Personality Test",
+     showProgressBar: "bottom",
+     pages: [{
+        questions: [
+   //        { type: "text", inputType: "email", title: "Your email", isRequired: true, name: "email", width: "20"},
+           { type: "matrix", name: "personality", title: "I am someone who...", isRequired:true,
+             columns: [{ value: 1, text: "Strongly Disagree" },
+                   { value: 2, text: "Disagree" },
+                   { value: 3, text: "Neutral" },
+                   { value: 4, text: "Agree          " },
+                   { value: 5, text: "Strongly Agree" }],
+             rows: [{ value: "1", text: "Is outgoing, sociable" },
+                   { value: "2", text: "Is compassionate, has a soft heart" },
+                   { value: "3", text: "Tends to be disorganized" },
+                   { value: "4", text: "Is relaxed, handles stress well" },
+                   { value: "5", text: "Has few artistic interests" },
+                   { value: "6", text: "Has an assertive personality" },
+                   { value: "7", text: "Is respectful, treats others with respect" },
+                   { value: "8", text: "Tends to be lazy" },
+                   { value: "9", text: "Stays optimistic after experiencing a setback" },
+                   { value: "10", text: "Is curious about many different things" },
+                   { value: "11", text: "Rarely feels excited or eager" },
+                   { value: "12", text: "Tends to find fault with others" }]}
+       ]
+     }, {
+       questions: [
+           { type: "matrix", name: "personality", title: "I am someone who...", isRequired:true,
+             columns: [{ value: 1, text: "Strongly Disagree" },
+                   { value: 2, text: "Disagree" },
+                   { value: 3, text: "Neutral" },
+                   { value: 4, text: "Agree          " },
+                   { value: 5, text: "Strongly Agree" }],
+             rows: [{ value: "13", text: "Is dependable, steady" },
+                   { value: "14", text: "Is moody, has up and down mood swings" },
+                   { value: "15", text: "Is inventive, finds clever ways to do things" },
+                   { value: "16", text: "Tends to be quiet" },
+                   { value: "17", text: "Feels little sympathy for others" },
+                   { value: "18", text: "Is systematic, likes to keep things in order" },
+                   { value: "19", text: "Can be tense" },
+                   { value: "20", text: "Is fascinated by art, music, or literature" },
+                   { value: "21", text: "Is dominant, acts as a leader" },
+                   { value: "22", text: "Starts arguments with others" },
+                   { value: "23", text: "Has difficulty getting started on tasks" },
+                   { value: "24", text: "Feels secure, comfortable with self" }]}
+       ]
+     }, {
+       questions: [
+           { type: "matrix", name: "personality", title: "I am someone who...", isRequired:true,
+             columns: [{ value: 1, text: "Strongly Disagree" },
+                   { value: 2, text: "Disagree" },
+                   { value: 3, text: "Neutral" },
+                   { value: 4, text: "Agree          " },
+                   { value: 5, text: "Strongly Agree" }],
+             rows: [{ value: "25", text: "Avoids intellectual, philosophical discussions" },
+                   { value: "26", text: "Is less active than other people" },
+                   { value: "27", text: "Has a forgiving nature" },
+                   { value: "28", text: "Can be somewhat careless" },
+                   { value: "29", text: "Is emotionally stable, not easily upset" },
+                   { value: "30", text: "Has little creativity" },
+                   { value: "31", text: "Is sometimes shy, introverted" },
+                   { value: "32", text: "Is helpful and unselfish with others" },
+                   { value: "33", text: "Keeps things neat and tidy" },
+                   { value: "34", text: "Worries a lot" },
+                   { value: "35", text: "Values art and beauty" },
+                   { value: "36", text: "Finds it hard to influence people" }]}
+       ]
+     }, {
+       questions: [
+           { type: "matrix", name: "personality", title: "I am someone who...", isRequired:true,
+             columns: [{ value: 1, text: "Strongly Disagree" },
+                   { value: 2, text: "Disagree" },
+                   { value: 3, text: "Neutral" },
+                   { value: 4, text: "Agree          " },
+                   { value: 5, text: "Strongly Agree" }],
+             rows: [{ value: "37", text: "Is sometimes rude to others" },
+                   { value: "38", text: "Is efficient, gets things done" },
+                   { value: "39", text: "Often feels sad" },
+                   { value: "40", text: "Is complex, a deep thinker" },
+                   { value: "41", text: "Is full of energy" },
+                   { value: "42", text: "Is suspicious of others’ intentions" },
+                   { value: "43", text: "Is reliable, can always be counted on" },
+                   { value: "44", text: "Keeps their emotions under control" },
+                   { value: "45", text: "Has difficulty imagining things" },
+                   { value: "46", text: "Is talkative" },
+                   { value: "47", text: "Can be cold and uncaring" },
+                   { value: "48", text: "Leaves a mess, doesn’t clean up" }]}
+       ]
+     }, {
+       questions: [
+           { type: "matrix", name: "personality", title: "I am someone who...", isRequired:true,
+             columns: [{ value: 1, text: "Strongly Disagree" },
+                   { value: 2, text: "Disagree" },
+                   { value: 3, text: "Neutral" },
+                   { value: 4, text: "Agree          " },
+                   { value: 5, text: "Strongly Agree" }],
+             rows: [{ value: "49", text: "Rarely feels anxious or afraid" },
+                   { value: "50", text: "Thinks poetry and plays are boring" },
+                   { value: "51", text: "Prefers to have others take charge" },
+                   { value: "52", text: "Is polite, courteous to others" },
+                   { value: "53", text: "Is persistent, works until the task is finished" },
+                   { value: "54", text: "Tends to feel depressed, blue" },
+                   { value: "55", text: "Has little interest in abstract ideas" },
+                   { value: "56", text: "Shows a lot of enthusiasm" },
+                   { value: "57", text: "Assumes the best about people" },
+                   { value: "58", text: "Sometimes behaves irresponsibly" },
+                   { value: "59", text: "Is temperamental, gets emotional easily" },
+                   { value: "60", text: "Is original, comes up with new ideas" }]}
+       ]
+     }, {
+       questions: [
+           { type: "radiogroup", name: "gender", title: "Your gender", isRequired: true,
+           choices: [{value: "f", text: "Female"}, {value: "m", text: "Male"}, {value: "o", text: "Other"}, {value: "n", text: "Prefer not to disclose"}]},
+           {type: "text", inputType: "number", title: "Year of birth", isRequired: true, name: "age", width: "4"}
+       ]
+     }]
+   };
+
+Survey.defaultBootstrapCss.navigationButton = "btn btn-green";
+//Survey.defaultBootstrapCss.progressBar = "bar-green";
+// Survey.Survey.cssType = "bootstrap";
+
+var survey = new Survey.Model(json);
+
+survey.onComplete.add(function(result) {
+    $.post('/personality_survey_answer_loggedin', {'json': JSON.stringify(result.data)}) //survey results
+        .success(function (personality_results) {
+//            VMail.App.studyDone = 1;
+            d3.select("#personality_test").append("img").attr("class", "team_admin")
+                                                .attr("src", "/static/images/done_icon.png");
+            d3.select("#results").style("display", "block");
+            d3.select(".tg").selectAll("#round").style("left", function(d, i){
+                switch(i){
+                    case 0: return ((380 - 16) / 100 * parseInt(personality_results['personality']['Open-Mindedness'])) + "px"; break;
+                    case 1: return ((380 - 16) / 100 * parseInt(personality_results['personality']['Conscientiousness'])) + "px"; break;
+                    case 2: return ((380 - 16) / 100 * parseInt(personality_results['personality']['Extraversion'])) + "px"; break;
+                    case 3: return ((380 - 16) / 100 * parseInt(personality_results['personality']['Agreeableness'])) + "px"; break;
+                    case 4: return ((380 - 16) / 100 * parseInt(personality_results['personality']['Negative Emotionality'])) + "px"; break;
+                }
+            }).style("top", "1px");
+            d3.select(".tg").selectAll(".tg-baqh").text(function(d, i){
+                switch(i){
+                    case 1: return personality_results['personality']['Open-Mindedness']; break;
+                    case 2: return personality_results['personality']['Conscientiousness']; break;
+                    case 3: return personality_results['personality']['Extraversion']; break;
+                    case 4: return personality_results['personality']['Agreeableness']; break;
+                    case 5: return personality_results['personality']['Negative Emotionality']; break;
+                    default: return "Percentile";
+                }
+            });
+            var i = 0; VMail.App.studyDone[i] = 1;
+            VMail.App.personality['Open-Mindedness'][i] = parseInt(personality_results['personality']['Open-Mindedness']);
+            VMail.App.personality['Conscientiousness'][i] = parseInt(personality_results['personality']['Conscientiousness']);
+            VMail.App.personality['Extraversion'][i] = parseInt(personality_results['personality']['Extraversion']);
+            VMail.App.personality['Agreeableness'][i] = parseInt(personality_results['personality']['Agreeableness']);
+            VMail.App.personality['Negative Emotionality'][i] = parseInt(personality_results['personality']['Negative Emotionality']);
+            
+        }
+    );
+});
+survey.showQuestionNumbers = "off";
+//survey.render("surveyElement");
+$("#study_questions_inner").Survey({
+    model: survey
+}); 
+    
+
+//for moral foundations 
+ var morality = 
+    {title: "Moral Foundations Questionnaire",
+     showProgressBar: "bottom",
+     pages: [{
+        questions: [
+           { type: "matrix", name: "morality", title: "When you decide whether something is right or wrong, to what extent are the following considerations relevant to your thinking?", isRequired:true,
+             columns: [{ value: 0, text: "Not At All Relevant" },
+                   { value: 1, text: "Not Very Relevant" },
+                   { value: 2, text: "Slightly Relevant" },
+                   { value: 3, text: "Somewhat Relevant" },
+                   { value: 4, text: "Very Relevant" },
+                   { value: 5, text: "Extremely Relevant" }],
+             rows: [{ value: "1", text: "Whether or not someone was denied his or her rights." },
+                   { value: "2", text: "Whether or not someone acted in a way that God would approve of." },
+                   { value: "3", text: "Whether or not someone showed a lack of loyalty." },
+                   { value: "4", text: "Whether or not some people were treated differently than others." },
+                   { value: "5", text: "Whether or not someone cared for someone weak or vulnerable." },
+                   { value: "6", text: "Whether or not someone was cruel." },
+                   { value: "7", text: "Whether or not someone showed a lack of respect for authority." },
+                   { value: "8", text: "Whether or not someone did something to betray his or her group." },
+                   { value: "9", text: "Whether or not someone conformed to the traditions of society." },
+                   { value: "10", text: "Whether or not an action caused chaos or disorder." },
+                   { value: "11", text: "Whether or not someone suffered emotionally." },
+                   { value: "12", text: "Whether or not someone did something disgusting." },
+                   { value: "13", text: "Whether or not someone's action showed love for his or her country." },
+                   { value: "14", text: "Whether or not someone acted unfairly." },
+                   { value: "15", text: "Whether or not someone violated standards of purity and decency." }]}
+       ]
+     }, {
+       questions: [
+           { type: "matrix", name: "morality", title: "Please read the following sentences and indicate your level of agreement or disagreement.", isRequired:true,
+             columns: [{ value: 0, text: "Strongly Disagree" },
+                   { value: 1, text: "Moderately Disagree" },
+                   { value: 2, text: "Slightly Disagree" },
+                   { value: 3, text: "Slightly Agree" },
+                   { value: 4, text: "Moderately Agree" },
+                   { value: 5, text: "Strongly Agree" }],
+             rows: [{ value: "16", text: "I would call some acts wrong on the grounds that they are unnatural." },
+                   { value: "17", text: "When the government makes laws, the number one principle should be ensuring that everyone is treated fairly." },
+                   { value: "18", text: "One of the worst things a person could do is hurt a defenseless animal." },
+                   { value: "19", text: "Compassion for those who are suffering is the most crucial virtue." },
+                   { value: "20", text: "Justice is the most important requirement for a society." },
+                   { value: "21", text: "It can never be right to kill a human being." },
+                   { value: "22", text: "Men and women each have different roles to play in society." },
+                   { value: "23", text: "If I were a soldier and disagreed with my commanding officer's orders, I would obey anyway because that is my duty." },
+                   { value: "24", text: "People should not do things that are disgusting, even if no one is harmed." },
+                   { value: "25", text: "It is more important to be a team player than to express oneself." },
+                   { value: "26", text: "I think it's morally wrong that rich children inherit a lot of money while poor children inherit nothing." },
+                   { value: "27", text: "I am proud of my country's history." },
+                   { value: "28", text: "Respect for authority is something all children need to learn." },
+                   { value: "29", text: "Chastity is an important and valuable virtue." },
+                   { value: "30", text: "People should be loyal to their family members, even when they have done something wrong." }]}
+       ]
+     }]
+   };
+
+var survey2 = new Survey.Model(morality);
+survey2.onComplete.add(function(result) {console.log(result.data);
+    $.post('/morality_survey_answer_loggedin', {'json': JSON.stringify(result.data)}) //survey results
+        .success(function (morality_results) {
+            d3.select("#results_morality").style("display", "block");
+            
+            var i = 0; VMail.App.studyDone_morality[i] = 1;
+            VMail.App.morality['Fairness'][i] = parseFloat(morality_results['morality']['Fairness']);
+            VMail.App.morality['Harm'][i] = parseFloat(morality_results['morality']['Harm']);
+            VMail.App.morality['Loyalty'][i] = parseFloat(morality_results['morality']['Loyalty']);
+            VMail.App.morality['Authority'][i] = parseFloat(morality_results['morality']['Authority']);
+            VMail.App.morality['Purity'][i] = parseFloat(morality_results['morality']['Purity']);
+            
+            d3.select("#morality_test").append("img").attr("class", "team_admin")
+                .attr("src", "/static/images/done_icon.png");
+            
+            var margin = {top: (parseInt(d3.select('body').style('width'), 10)/8), right: (parseInt(d3.select('body').style('width'), 10)/5), bottom: (parseInt(d3.select('body').style('width'), 10)/5), left: (parseInt(d3.select('body').style('width'), 10)/5)},
+                width = parseInt(d3.select('body').style('width'), 10) - margin.left - margin.right,
+                height = parseInt(d3.select('body').style('height'), 10) - margin.top - margin.bottom;
+
+            var x0 = d3.scale.ordinal()
+                .rangeRoundBands([0, width], .1);
+
+            var x1 = d3.scale.ordinal();
+
+            var y = d3.scale.linear()
+                .range([height, 0]);
+
+            var colorRange = d3.scale.category20();
+            var color = d3.scale.ordinal()
+                .domain(["You", "Liberals", "Conservatives"])
+                .range(["#ffffff", "#1b466c", "#ab2b2b"]);
+
+            var xAxis = d3.svg.axis()
+                .scale(x0)
+                .orient("bottom");
+
+            var yAxis = d3.svg.axis()
+                .scale(y)
+                .orient("left")
+                .ticks(5);
+
+            var divTooltip = d3.select("body").append("div").attr("class", "toolTip");
+
+            d3.select("#morality_histo").selectAll("*").remove();
+            var svg = d3.select("#morality_histo")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+            dataset = [
+                {label:"Fairness", "You": VMail.App.morality['Fairness'][k], "Liberals": 3.8, "Conservatives": 3.1},
+                {label:"Harm", "You": VMail.App.morality['Harm'][k], "Liberals": 3.7, "Conservatives": 3.1},
+                {label:"Loyalty", "You": VMail.App.morality['Loyalty'][k], "Liberals": 2.2, "Conservatives": 3.1},
+                {label:"Authority", "You": VMail.App.morality['Authority'][k], "Liberals": 2.1, "Conservatives": 3.3},
+                {label:"Purity", "You": VMail.App.morality['Purity'][k], "Liberals": 1.4, "Conservatives": 3.0}
+            ];
+
+
+            var options = d3.keys(dataset[0]).filter(function(key) { return key !== "label"; });
+
+            dataset.forEach(function(d) {
+                d.valores = options.map(function(name) { return {name: name, value: +d[name]}; });
+            });
+
+            x0.domain(dataset.map(function(d) { return d.label; }));
+            x1.domain(options).rangeRoundBands([0, x0.rangeBand()]);
+            y.domain([0, 5]);
+
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
+
+            svg.append("g")
+                .attr("class", "y axis")
+                .call(yAxis)
+                .append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 6)
+                .attr("dy", ".71em")
+                .style("text-anchor", "end")
+                .text("Score");
+
+            var bar = svg.selectAll(".bar")
+                .data(dataset)
+                .enter().append("g")
+                .attr("class", "rect")
+                .attr("transform", function(d) { return "translate(" + x0(d.label) + ",0)"; });
+
+            bar.selectAll("rect")
+                .data(function(d) { return d.valores; })
+                .enter().append("rect")
+                .attr("width", x1.rangeBand())
+                .attr("x", function(d) { return x1(d.name); })
+                .attr("y", function(d) { return y(d.value); })
+                .attr("value", function(d){return d.name;})
+                .attr("height", function(d) { return height - y(d.value); })
+                .style("fill", function(d) { return color(d.name); });
+
+            bar
+                .on("mousemove", function(d){
+                    divTooltip.style("left", d3.event.pageX+10+"px");
+                    divTooltip.style("top", d3.event.pageY-25+"px");
+                    divTooltip.style("display", "inline-block");
+                    var x = d3.event.pageX, y = d3.event.pageY
+                    var elements = document.querySelectorAll(':hover');
+                    l = elements.length
+                    l = l-1
+                    elementData = elements[l].__data__
+                    divTooltip.html((d.label)+"<br>"+elementData.name+"<br>"+elementData.value+"%");
+                });
+            bar
+                .on("mouseout", function(d){
+                    divTooltip.style("display", "none");
+                });
+
+
+            var legend = svg.selectAll(".legend")
+                .data(options.slice())
+                .enter().append("g")
+                .attr("class", "legend")
+                .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+            legend.append("rect")
+                .attr("x", width - 18)
+                .attr("width", 18)
+                .attr("height", 18)
+                .style("fill", color);
+
+            legend.append("text")
+                .attr("x", width - 24)
+                .attr("y", 9)
+                .attr("dy", ".35em")
+                .style("text-anchor", "end")
+                .text(function(d) { return d; });
+        }
+    );
+});
+survey2.showQuestionNumbers = "off";
+$("#study_questions_inner2").Survey({
+    model: survey2
+}); 
+
+
+//for demographic survey 
+ var demographic = {
+   pages: [{
+     name: "page1",
+     elements: [
+      {
+       type: "radiogroup",
+       choices: [
+        {value: "f", text: "Female"},
+        {value: "m", text: "Male"},
+        {value: "o", text: "Other"},
+        {value: "n", text: "Prefer not to disclose"}
+       ],
+       colCount: 4,
+       // isRequired: true,
+       name: "gender",
+       title: "Your gender"
+      },
+      {
+       type: "text",
+       inputType: "number",
+       // isRequired: true,
+       name: "yob",
+       title: "Year of birth"
+      },
+      {
+       type: "dropdown",
+       renderAs: "select2tagbox",
+       choicesByUrl: {
+        url: "https://restcountries.eu/rest/v1/all"
+       },
+       name: "nationality",
+       isRequired: true,
+       title: "Which country are you from?"
+      },
+      {
+       type: "dropdown",
+       choices: ["White", "Hispanic/Latino/Spanish", "Black or African American", "American Indian/Alaska Native", "Asian", "Native Hawaiian/Other Pacific Islander", "Other"],
+       name: "ethnicity",
+       isRequired: true,
+       title: "What's your ethnicity origin?"
+      },
+      {
+       type: "matrixdynamic",
+       addRowText: "Add language",
+       columns: [
+        {
+         name: "Language",
+         choices: ['Mandarin', 'Spanish', 'English', 'Hindi', 'Arabic', 'Portuguese', 'Bengali', 'Russian', 'Japanese', 'Punjabi', 'German', 'Javanese', 'Wu', 'Malay', 'Telugu', 'Vietnamese', 'Korean', 'French', 'Marathi', 'Tamil', 'Urdu', 'Turkish', 'Italian', 'Yue', 'Thai', 'Gujarati', 'Jin', 'Southern Min', 'Persian', 'Polish', 'Pashto', 'Kannada', 'Xiang', 'Malayalam', 'Sundanese', 'Hausa', 'Odia', 'Burmese', 'Hakka', 'Ukrainian', 'Bhojpuri', 'Tagalog', 'Yoruba', 'Maithili', 'Uzbek', 'Sindhi', 'Amharic', 'Fula', 'Romanian', 'Oromo', 'Igbo', 'Azerbaijani', 'Awadhi', 'Gan Chinese', 'Cebuano', 'Dutch', 'Kurdish', 'Serbo-Croatian', 'Malagasy', 'Saraiki', 'Nepali', 'Sinhalese', 'Chittagonian', 'Zhuang', 'Khmer', 'Turkmen', 'Assamese', 'Madurese', 'Somali', 'Marwari', 'Magahi', 'Haryanvi', 'Hungarian', 'Chhattisgarhi', 'Greek', 'Chewa', 'Deccan', 'Akan', 'Kazakh', 'Northern Min', 'Sylheti', 'Zulu', 'Czech', 'Kinyarwanda', 'Dhundhari', 'Haitian Creole', 'Eastern Min', 'Ilocano', 'Quechua', 'Kirundi', 'Swedish', 'Hmong', 'Shona', 'Uyghur', 'Hiligaynon/Ilonggo', 'Mossi', 'Xhosa', 'Belarusian', 'Balochi', 'Konkani'],
+         cellType: "dropdown",
+         renderAs: "select2tagbox",
+         isRequired: true,
+         hasOther: true,
+         choicesOrder: "asc"
+        }
+       ],
+       name: "languages",
+       rowCount: 1,
+       title: "What languages do you speak?",
+       isRequired: true,
+       width: "700px"
+      },
+      {
+       type: "dropdown",
+       choices: ["(Research) Professor", "(Research) Administrative", "(Research) Research Scientist", "(Research) Lecturer", "(Research) Postdoc", "(Research) PhD student", "(Research) Master's student", "(Research) Undergraduate", "(Research) Other", "(Company) President", "(Company) Director", "(Company) Manager", "(Company) Employee", "(Company) Other"],
+       name: "position",
+       isRequired: true,
+       title: "What is your job position?"
+      },
+      {
+       type: "dropdown",
+       renderAs: "select2tagbox",
+       choices: ["Accounting", "Actuarial Science", "Advertising", "Agriculture", "Agricultural and Biological Engineering", "Agricultural Business Management", "Agriculture Economics", "Animal Bioscience", "Animal Sciences", "Anthropology", "Applied Mathematics", "Archaeology", "Architectural Engineering", "Architecture", "Art History", "Studio Art", "Art Education", "Biobehavioral Health", "Biochemistry", "Bioengineering", "Biology", "Biophysics", "Biotechnology", "Business Administration and Management", "Business Logistics", "Chemical Engineering", "Chemistry", "Children", "Civil Engineering", "Computer Engineering", "Computer Science", "Crime, Law, and Justice", "Dance", "Earth Sciences", "Economics", "Electrical Engineering", "Elementary and Kindergarten Education", "Engineering Science", "English", "Environmental Systems Engineering", "Environmental Sciences", "Environmental Resource Management", "Film and Video", "Finance", "Food Science", "Forest Science", "Forest Technology", "General Science", "Geography", "Geosciences", "Graphic Design and Photography", "Health and Physical Education", "Health Policy and Administration", "History", "Horticulture", "Hotel, Restaurant, and Institutional Management", "Human Development and Family Studies", "Individual and Family Studies", "Industrial Engineering", "Information Sciences and Technology", "Journalism", "Kinesiology", "Landscape Architecture", "Law Enforcement and Correction", "Marine Biology", "Marketing", "Mathematics", "Mechanical Engineering", "Media Studies", "Meteorology", "Microbiology", "Mineral Economics", "Modern Languages", "Music Education", "Nuclear Engineering", "Nursing", "Nutrition", "Philosophy", "Physics", "Physiology", "Political Science", "Pre-medicine", "Psychology", "Public Relations", "Real Estate", "Recreation and Parks", "Rehabilitation Services", "Religious Studies", "Secondary Education", "Sociology", "Social Work", "Special Education", "Speech Communication", "Speech Pathology and Audiology/Communication Disorder", "Statistics", "Telecommunications", "Theater", "Wildlife and Fishery Science", "Wildlife Technology", "Women's Studies"],
+       name: "major_college",
+       isRequired: false,
+       title: "What is your college major?"
+      },
+      {
+       type: "dropdown",
+       renderAs: "select2tagbox",
+       choices: ["Accounting", "Actuarial Science", "Advertising", "Agriculture", "Agricultural and Biological Engineering", "Agricultural Business Management", "Agriculture Economics", "Animal Bioscience", "Animal Sciences", "Anthropology", "Applied Mathematics", "Archaeology", "Architectural Engineering", "Architecture", "Art History", "Studio Art", "Art Education", "Biobehavioral Health", "Biochemistry", "Bioengineering", "Biology", "Biophysics", "Biotechnology", "Business Administration and Management", "Business Logistics", "Chemical Engineering", "Chemistry", "Children", "Civil Engineering", "Computer Engineering", "Computer Science", "Crime, Law, and Justice", "Dance", "Earth Sciences", "Economics", "Electrical Engineering", "Elementary and Kindergarten Education", "Engineering Science", "English", "Environmental Systems Engineering", "Environmental Sciences", "Environmental Resource Management", "Film and Video", "Finance", "Food Science", "Forest Science", "Forest Technology", "General Science", "Geography", "Geosciences", "Graphic Design and Photography", "Health and Physical Education", "Health Policy and Administration", "History", "Horticulture", "Hotel, Restaurant, and Institutional Management", "Human Development and Family Studies", "Individual and Family Studies", "Industrial Engineering", "Information Sciences and Technology", "Journalism", "Kinesiology", "Landscape Architecture", "Law Enforcement and Correction", "Marine Biology", "Marketing", "Mathematics", "Mechanical Engineering", "Media Studies", "Meteorology", "Microbiology", "Mineral Economics", "Modern Languages", "Music Education", "Nuclear Engineering", "Nursing", "Nutrition", "Philosophy", "Physics", "Physiology", "Political Science", "Pre-medicine", "Psychology", "Public Relations", "Real Estate", "Recreation and Parks", "Rehabilitation Services", "Religious Studies", "Secondary Education", "Sociology", "Social Work", "Special Education", "Speech Communication", "Speech Pathology and Audiology/Communication Disorder", "Statistics", "Telecommunications", "Theater", "Wildlife and Fishery Science", "Wildlife Technology", "Women's Studies"],
+       name: "major_graduate",
+       isRequired: false,
+       title: "What is your graduate major?"
+      },
+      {
+       type: "dropdown",
+       renderAs: "select2tagbox",
+       choices: [
+        "Associate's or equivalent", "Bachelor's or equivalent", "Master's or equivalent", "Doctoral or equivalent", "N/A"
+       ],
+       name: "academic_degree",
+       isRequired: true,
+       title: "What is your highest academic degree?"
+      },
+      {
+       type: "text",
+       inputType: "number",
+       name: "neighbors",
+       title: "How many people do you share office with?"
+      },
+      {
+       type: "multipletext",
+       items: [
+        {name: "Building"},
+        {name: "Floor"},
+        {name: "Room"}
+       ],
+       name: "office_location",
+       isRequired: true,
+       title: "What is your office location?"
+      }
+     ]
+    }
+   ],
+   title: "Demographic Survey"
+  };
+
+var survey3 = new Survey.Model(demographic);
+survey3.onComplete.add(function(result) {
+    var data = {};
+    for(var key in result.data){
+      data[key] = result.data[key];
+    }
+    if('office_location' in result.data){
+      result.data['office_location']['Building'] = building_full;
+      data['office_location']['Building'] = building_full;
+    }
+    // if(VMail.App.studyDone[0] == 1){
+    //     data['gender'] = VMail.App.personality['demographics'][0]['gender'];
+    //     data['yob'] = VMail.App.personality['demographics'][0]['YOB'];
+    // }
+    
+    $.post('/demographic_survey_answer_loggedin', {'json': JSON.stringify(data)}) //survey results
+        .success(function (success) {
+            // d3.select("#results_demographic").style("display", "block");
+            
+            var i = 0; VMail.App.studyDone_demographic[i] = 1;
+            for(var key in success['success']['demographics'])
+              VMail.App.demographic[key][i] = success['success']['demographics'][key];
+
+            d3.select("#demographic_test").append("img").attr("class", "team_admin")
+                .attr("src", "/static/images/done_icon.png");
+            
+            // VMail.App.demographic['gender'][i] = result.data['gender'];
+            // VMail.App.demographic['yob'][i] = parseInt(result.data['yob']);
+            // VMail.App.demographic['nationality'][i] = result.data['nationality'];
+            // VMail.App.demographic['degree'][i] = result.data['academic_degree'];
+            // VMail.App.demographic['major'][i] = result.data['major'];
+            // VMail.App.demographic['position'][i] = result.data['position'];
+            // VMail.App.demographic['office'][i] = {
+            //   'building': result.data['office_location']['Building'].substring(0, result.data['office_location']['Building'].indexOf("+")), 
+            //   'floor': result.data['office_location']['floor'], 
+            //   'room': result.data['office_location']['room']
+            // };
+            // // VMail.App.demographic['neighbors'][i] = result.data['neighbors'];
+            // VMail.App.demographic['languages'][i] = [];
+            // for(var kk = 0; kk < result.data['languages'].length; kk++)
+            //   VMail.App.demographic['languages'][i].push(result.data['languages'][kk]);
+
+        }
+    );
+});
+survey3.showQuestionNumbers = "off";
+$("#study_questions_inner3").Survey({
+    model: survey3
+}); 
+
+
+
+$("#feedback_form").hide();
+
+var version = "{{version}}";
+if(version < 0) setTimeout(function() { location.reload(); }, 10000);
+
+function htmlDecode(value) {
+  return $('<div/>').html(value).text();
+}
+VMail.App.usersinfo = JSON.parse(htmlDecode("{{userinfo}}"));
+VMail.App.userinfo = JSON.parse(htmlDecode("{{userinfo}}"))[0];
+VMail.App.type = htmlDecode("{{type}}");
+
+VMail.App.version = JSON.parse(htmlDecode("{{version}}"));
+VMail.App.working = {{working}};
+
+function feedback_action() {
+  if($('#compose').html() == "") {
+    $('#compose').html("Cancel");
+    $('#compose_write').css("display", "none");
+    $('#feedback_form').show();
+  }
+  else {
+    $('#feedback_form').hide();
+    $('#compose').html("");
+    $('#compose_write').css("display", "block");
+  }
+}
+
+$("#feedback_form").submit(function() {
+  var datastring = "feedback_text=" + $("#feedback_text").val();
+  $.ajax({
+    type: "POST",
+    url: '/feedback',
+    data: datastring,
+    success: function() {
+      feedback_action();
+      $('#loader').html("Sent. Thanks for your feedback!")
+      $('#loader').fadeIn('fast');
+      setTimeout(function() {$("#loader").fadeOut('fast');}, 3000);
+    }
+  });
+  return false;
+});
+
+d3.select("#study_questions_inner").select("thead").selectAll("th").style("width",function(d, i){return i==0?"380px":"100px";})
+d3.select("#study_questions_inner").selectAll("tr").style("background-color",function(d, i){return i%2==0?"rgba(150, 150, 150, 0)":"rgba(150, 150, 150, 0.15)";});
+d3.select("#study_questions_inner2").select("thead").selectAll("th").style("width",function(d, i){return i==0?"650px":"110px";})
+d3.select("#study_questions_inner2").selectAll("tr").style("background-color",function(d, i){return i%2==0?"rgba(150, 150, 150, 0)":"rgba(150, 150, 150, 0.15)";});
+d3.select("#study_questions_inner2").select(".sv_nav").style("margin-top", "-30px").style("margin-bottom", "30px").style("float", "right").style("z-index", 10000);
+
+function initAutocomplete() {
+  d3.select("#study_questions_inner3").select(".sv_nav").style("margin-top", "60px").select("input").style("margin-left", 0).style("z-index", 10000);
+  d3.select("#sq_119").selectAll("tr")
+  .style("height", function(d,i){ return i==0? "350px":d; })
+  .style("vertical-align", function(d,i){ return i==0? "top":d; });
+  d3.select("#sq_119i").style("width", "515px").attr("placeholder", "Search Box");
+  d3.selectAll("#sq_119i").style("width", "515px");
+  d3.select("#sq_119").select("table").select("tbody").append("tr").html("<td></td><td><div id='map'></div></td><td></td><td></td><td></td><td></td>");
+  var map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: 39.088386, lng: -94.616945},
+    zoom: 3,
+    mapTypeId: 'roadmap',
+    mapTypeControl: false
+    // disableDefaultUI: true
+  });
+  // Create the search box and link it to the UI element.
+  d3.select(".gmnoprint").style("display", "none");
+  var input = document.getElementById('sq_119i_substitute');
+  var searchBox = new google.maps.places.SearchBox(input);
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+  setTimeout(function(){ d3.select("#sq_119i_substitute").style("display", "block");}, 1000);
+
+  // Bias the SearchBox results towards current map's viewport.
+  map.addListener('bounds_changed', function() {
+    searchBox.setBounds(map.getBounds());
+  });
+
+  var markers = [];
+  var the_marker = null;
+  var select = "<div id='select_location'>Select</div>";
+  var infowindow = new google.maps.InfoWindow({
+    content: "<div id='location_name'></div>" + select
+  });
+
+  // Listen for the event fired when the user selects a prediction and retrieve
+  // more details for that place.
+  searchBox.addListener('places_changed', function() {
+    var places = searchBox.getPlaces();
+
+    if (places.length == 0) {
+      return;
+    }
+
+    // Clear out the old markers.
+    markers.forEach(function(marker) {
+      marker.setMap(null);
+    });
+    markers = [];
+    if(the_marker != null) the_marker.setMap(null);
+    the_marker = null;
+
+    // For each place, get the icon, name and location.
+    var bounds = new google.maps.LatLngBounds();
+    
+    places.forEach(function(place) {
+      if (!place.geometry) {
+        console.log("Returned place contains no geometry");
+        return;
+      }
+      var icon = {
+        url: place.icon,
+        size: new google.maps.Size(71, 71),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(17, 34),
+        scaledSize: new google.maps.Size(25, 25)
+      };
+      var image = {
+        url: '/static/images/marker.png',
+        size: new google.maps.Size(38, 40),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(19, 40),
+        scaledSize: new google.maps.Size(38, 40)
+      };
+      var image_selected = {
+        url: '/static/images/marker_selected.png',
+        size: new google.maps.Size(28, 40),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(14, 40),
+        scaledSize: new google.maps.Size(28, 40)
+      };
+
+      // Create a marker for each place.
+      markers.push(new google.maps.Marker({
+        map: map,
+        icon: image,
+        title: place.name,
+        position: place.geometry.location
+      }));
+
+      if (place.geometry.viewport) {
+        // Only geocodes have viewport.
+        bounds.union(place.geometry.viewport);
+      } else {
+        bounds.extend(place.geometry.location);
+      }
+
+      if(place.name == places[places.length - 1].name){
+        //if only one result, select it automatically
+        if(markers.length == 1){
+            $('#map #sq_119i_substitute').val(markers[0].title);
+            //remove all other icons
+            markers[0].setMap(null);
+            //change marker icon to the 'selected' one
+            the_marker = new google.maps.Marker({
+              map: map,
+              icon: image_selected,
+              title: markers[0].title,
+              position: markers[0].position
+            });
+            google.maps.event.addListener(the_marker, 'click', function() {
+                infowindow.setContent(the_marker.title);
+                infowindow.open(map, the_marker);
+            });
+            //record the lat and lng, and location name
+            building_full = markers[0].title + "+" + markers[0].position;
+            $('#sq_119i').val(markers[0].title + "+" + markers[0].position);
+            markers = [];
+            d3.select("#map").select("#sq_119i").style("display", "block");
+        }
+        else{ //else create markers and let the user choose one
+            markers.forEach(function(marker) {
+              ///when a marker is clicked
+              google.maps.event.addListener(marker, 'click', function() {
+                infowindow.setContent("<div id='location_name'>" + marker.title + "</div>" + select);
+                // d3.select("#location_name").text(marker.title);
+                infowindow.open(map, this);
+                d3.select("#map").select("#select_location").on("click", function(){
+                  //update search box text
+                  $('#map #sq_119i_substitute').val(marker.title);
+                  //remove all other icons
+                  for (var i = 0; i < markers.length; i++) {
+                    markers[i].setMap(null);
+                  }
+                  markers = [];
+                  //change marker icon to the 'selected' one
+                  the_marker = new google.maps.Marker({
+                    map: map,
+                    icon: image_selected,
+                    title: marker.title,
+                    position: marker.position
+                  });
+                  //record the lat and lng, and location name
+                  building_full = marker.title + "+" + marker.position;
+                  $('#sq_119i').val(marker.title + "+" + marker.position);
+                });
+                d3.select("#map").select("#sq_119i").style("display", "block");
+              });
+            });
+        }
+      }
+    });
+
+    map.fitBounds(bounds);
+    d3.select("#study_questions_inner3").select("#sq_119i").style("display", "none");
+    d3.select("#map").select("#sq_119i").style("display", "block");
+  });
+  google.maps.event.trigger(map, 'resize');
+
+  VMail.App.initAutocomplete_done = 1;
+}
+</script>
+
+{% end %}

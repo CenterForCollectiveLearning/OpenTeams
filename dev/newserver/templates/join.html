@@ -1,0 +1,115 @@
+{% extends "v2_base_new.html" %}
+
+{% block body %}
+<script src="/static/js/libs/addressparser2.js"></script>
+<script src="/static/js/libs/webtoolkit.base64.js"></script>
+<script src="/static/js/libs/canvg.js"></script>
+<div id="box">
+    <img id="immersion_teams_logo" src="/static/images/basic-url-logo2_horizontal.png">
+    <div class="create_team">
+      <!--<a href="/"><img class="logo" src="/static/images/basic-url-logo2.png"/></a>-->
+      <div id="create_team_header">Join a team</div>
+      <div id="create_team_body">
+        <div id="create_team_link">
+          <!-- <div id="host_link">https://teams.media.mit.edu/teamviz/</div> -->
+          <label for="team_name">Room name: </label>
+          <input id="team_name" type="text" name="team_name" value="{{team_id}}" placeholder="team name" onkeypress="key_pressed(event)"/><br>
+          <label for="password_label" style="position: relative; top: 25px;">Password: </label>
+          <input id="team_password" type="password" name="team_password" value="{{team_password}}" placeholder="password" onkeypress="key_pressed(event)"/>
+          <span toggle="#team_password" class="fa fa-fw fa-eye field-icon toggle-password">
+            <img id="password_visible" src="/static/images/show_password.png">
+          </span> 
+          <div id="not_available_join" style="display:none;">
+              <span id="create_info">The team hasn't been created. Do you want to create it and use the entered password?</span>
+              <a id="create_yes" class="new_name_create_team" onclick="createTeam(1);">Yes</a> 
+              <a id="create_no" class="new_name_create_team" onclick="createTeam(0);">No</a> 
+          </div>
+        </div>
+      </div>
+      <div id="create_team_send" onclick="check_team_name()">Join</div>
+    </div>
+
+    <div id="create_footer">
+      <div id="signoff">&copy; 2017 <a href="http://macroconnections.media.mit.edu">Collective Learning</a>&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;<a href="http://media.mit.edu">MIT Media Lab</a></div>
+    </div>
+</div>
+
+<script>
+function htmlDecode(value) {
+  return $('<div/>').html(value).text();
+}
+var availability = {{availability}}, password_match = {{password_match}};
+if(availability == 0){
+    d3.select("#not_available_join").style("display", "block");
+    d3.select("#create_team_send").style("display", "none");
+    document.getElementById("team_name").select();
+}
+var team_id = htmlDecode("{{team_id}}");
+var team_password = htmlDecode("{{team_password}}");
+if(password_match == 0){
+    alert("Wrong password");
+    document.getElementById("team_password").select();
+}
+
+$(".toggle-password").click(function() {
+  // $(this).toggleClass("fa-eye fa-eye-slash");
+  var input = $($(this).attr("toggle"));
+  if (input.attr("type") == "password") {
+    $("#password_visible").attr("src", "/static/images/hide_password.png");
+    input.attr("type", "text");
+  } else {
+    $("#password_visible").attr("src", "/static/images/show_password.png");
+    input.attr("type", "password");
+  }
+});
+
+var check_team_name = function(){
+    team_id = document.getElementById("team_name").value;
+    team_password = document.getElementById("team_password").value;
+    // window.location.href = "/join_check/&json=" + team_id;
+    $.post('/join_check', {'json': JSON.stringify({team_id: team_id, team_password: team_password})})
+    .success(function (returned_data) { 
+        if(returned_data['availability'] == 0){//room hasn't been created
+          availability = 0; 
+          d3.select("#not_available_join").style("display", "block");
+          d3.select("#create_team_send").style("display", "none");
+          document.getElementById("team_name").select();
+        }
+        else if(returned_data['password_match'] == 0){//wrong password
+          password_match = {{password_match}};
+          alert("Wrong password");
+          document.getElementById("team_password").select();
+        }
+        else{//
+          window.location.href = "/login/" + team_id;
+        }
+    });
+};
+function createTeam(flag){
+    if(flag){ //create the team
+        window.location.href = "/login/" + team_id;
+        $.post('/login', {'json': JSON.stringify({team_id: team_id, team_password: team_password})})
+        .success(function (returned_data) { 
+            if(returned_data['success']){//room hasn't been created
+              window.location.href = "/login/" + team_id;
+            }
+        });
+    }
+    else{
+        team_id = "";
+        document.getElementById("team_name").value = team_id;
+        d3.select("#not_available_join").style("display", "none");
+        d3.select("#create_team_send").style("display", "block");
+        document.getElementById("team_name").select();
+    }
+}
+
+function key_pressed(e) {
+    //if is enter
+    if (e.keyCode == 13) {
+        check_team_name();
+    }
+}
+</script>
+
+{% end %}

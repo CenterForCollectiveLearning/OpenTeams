@@ -1,0 +1,186 @@
+{% extends "base_new0.html" %}
+
+{% block body %}
+{% if context['exhibit'] %}
+<iframe id="myIFrame" width="0" height="0" style="display:none;"></iframe>
+{% end %}
+<!-- REQUIRED LIBS -->
+<script src="/static/js/libs/addressparser2.js"></script>
+<script src="/static/js/libs/webtoolkit.base64.js"></script>
+<script src="/static/js/libs/canvg.js"></script>
+<script src="/static/js/libs/jsnetworkx.js"></script>
+<script src="/static/js/libs/rgbcolor.js"></script>
+<script src="/static/js/libs/survey.jquery.min.js"></script>
+
+<script type="text/javascript" src="http://canvg.github.io/canvg/rgbcolor.js"></script> 
+<script type="text/javascript" src="http://canvg.github.io/canvg/StackBlur.js"></script>
+<script type="text/javascript" src="http://canvg.github.io/canvg/canvg.js"></script> 
+<script src="/static/js/libs/html2canvas.js"></script>
+<script src="/static/js/libs/html2canvas.min.js"></script>
+<!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.svg.js"></script>  -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.debug.js" integrity="sha384-CchuzHs077vGtfhGYl9Qtc7Vx64rXBXdIAZIPbItbNyWIRTdG0oYAqki3Ry13Yzu" crossorigin="anonymous"></script>
+
+<!-- OUR LIBS -->
+<script>
+//###### Report errors back to server ###########
+window.onerror = function (errorMsg, url, lineNumber) {
+  var data = {
+    'errorMsg': errorMsg,
+    'url': url,
+    'lineNumber': lineNumber
+  };
+  $.post('/senderror', { 'json': JSON.stringify(data) });
+  return false;
+};
+//#########################################
+
+//### fix console is undefined in IE7/8 ###
+if (!window.console) {
+  console = {log: function() {}};
+}
+//##################################
+</script>
+<script src="/static/js/graph.js"></script>
+<script src="/static/js/viz_new.js"></script>
+<script src="/static/js/db.js"></script>
+<script src="/static/js/personal_report.js"></script>
+<script src="https://d3plus.org/js/d3.js"></script>
+<script src="https://d3plus.org/js/d3plus.js"></script>
+<script src="https://d3js.org/d3-time.v1.min.js"></script>
+
+
+<div id="loader" style="display: none">Generating Personal Report...</div>
+
+<div id="runway" style="display:none;text-align:center;margin:0 auto 0 auto;width:500px;">
+    <img id="user_pic" class="runway_item"></img>
+    <div id="user_name" class="runway_item"></div>
+    <div id="user_email" class="runway_item"></div>
+    <div id="user_totalemails" class="runway_item"></div>
+    <div id="user_fetchedcount" class="runway_item"></div>
+    <div id="user_queue" class="runway_item"></div>
+</div>
+<div id="whole_report_cover">
+  <div id="whole_report_outer">
+    <div id="whole_report" style="display: block;">
+      <div id="first_img">
+        <img id="header_pic" style="display: none;"></img>
+        <div id="report_title"></div>
+        <div class="report_p" id="report_p1"></div>
+        <div class="report_p" id="report_p2"></div>
+        <div class="report_p" id="report_p3"></div>
+        <div class="viz_two" id="emails_and_contacts">
+          <div class="viz_single" id="viz_emails"></div>
+          <div class="viz_single" id="viz_contacts"></div>
+        </div>
+      </div>
+      <div class="viz_network" id="viz_network_contacts" style="display: block;"> 
+        <svg id="network_contacts" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"></svg>
+        <div class="intro" id="intro_contacts">
+          <div class="intro_p_title" id="intro_contacts_title"></div>
+          <div class="intro_p" id="intro_p1"></div>
+          <div class="intro_p" id="intro_p2"></div>
+          <div class="intro_p" id="intro_p3"></div>
+          <div class="intro_p" id="intro_p4"></div>
+        </div>
+      </div>
+      <div class="report_p" id="report_p4"></div>
+      <div id="top_contacts_cover"><svg id="top_contacts" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"></svg></div>
+      <div class="report_p" id="report_p4_2"></div>
+      <div id="year_top_contacts_cover"><svg id="year_top_contacts" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"></svg></div>
+      <div class="viz_network" id="viz_network_orgs" style="display: block;">
+        <svg id="network_orgs" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink" style="display: block;"></svg>
+        <div class="intro" id="intro_orgs">
+          <div class="intro_p_title" id="intro_orgs_title"></div>
+          <div class="intro_p" id="intro_p5"></div>
+          <div class="intro_p" id="intro_p6"></div>
+          <div class="intro_p" id="intro_p7"></div>
+          <div class="intro_p" id="intro_p8"></div>
+        </div>
+      </div>
+      <div class="report_p" id="report_p5"></div>
+      <div id="top_orgs_cover"><svg id="top_orgs" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"></svg></div>
+      <div class="report_p" id="report_p5_2"></div>
+      <div id="year_top_orgs_cover" style="display: block;"><svg id="year_top_orgs" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink" style="display: block;"></svg></div>
+
+      <div class="report_p" id="report_p6"></div>
+      <div id="viz_radar_personality">
+        <div class="the_radar" id="viz_radar1">
+          <div class="radar_title"></div>
+        </div>
+        <div id="radar_intro">
+          <div id="radar1_intro"></div>
+        </div>
+      </div>
+      <div id="viz_radar_morality">
+        <div id="radar_intro">
+          <div id="radar2_intro"></div>
+        </div>
+        <div class="the_radar" id="viz_radar2">
+          <div class="radar_title"></div>
+        </div>
+      </div>
+
+      <div class="report_p" id="report_p7"></div>
+      <div class="viz_responsetime" id="responsetime_my">
+        <svg id="responsetime1" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"></svg>
+      </div>
+      <div class="report_p" id="report_p8"></div>
+      <div class="viz_responsetime" id="responsetime_contacts">
+        <svg id="responsetime2" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"></svg>
+      </div>
+      <div class="report_p" id="report_p9"></div>
+      <div class="viz_two" id="time_patterns">
+        <div class="viz_single" id="viz_hours"></div>
+        <div class="viz_single" id="viz_days"></div>
+      </div>
+
+      <div class="report_p" id="report_p10"></div>
+
+      <div id="bottom_blank"></div>
+    </div>
+  </div>
+  <canvas id="testcanvas" style="display:block;"></canvas>
+  <div id="footer_analysis" style="display: none;">
+    <div id="signoff">&copy; 2017 <a href="http://macroconnections.media.mit.edu">Collective Learning</a>&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;<a href="http://media.mit.edu">MIT Media Lab</a></div>
+  </div>
+  <div id="generate_pdf" style="display: none;">Generate Image</div>
+  <div id="info" style="display: none;">(Currently this feature only works in Chrome browser)</div>
+</div>
+<div id="processing" style="display: none;">Genrating your personal report</div>
+<div id="data" style="display:none">
+  <div class="column" id="centercolumn">
+    <div><svg id="network" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"></svg></div>
+    <canvas id="networkcanvas" style="display:none;"></canvas>
+  <!-- AddThis Button BEGIN -->
+    <div id="socialstuff" class="addthis_toolbox addthis_default_style addthis_32x32_style">
+      <a class="addthis_button_facebook"></a>
+      <a class="addthis_button_twitter"></a>
+      <a class="addthis_button_google_plusone_share"></a>
+      <a class="addthis_button_linkedin"></a>
+    </div>
+    <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=undefined"></script>
+  <!-- AddThis Button END -->
+  </div>
+</div>
+
+<script>
+
+var version = "{{version}}";
+if(version < 0) setTimeout(function() { location.reload(); }, 10000);
+
+function htmlDecode(value) {
+  return $('<div/>').html(value).text();
+}
+VMail.App.usersinfo = JSON.parse(htmlDecode("{{userinfo}}"));
+VMail.App.userinfo = JSON.parse(htmlDecode("{{userinfo}}"))[0];
+VMail.App.type = htmlDecode("{{type}}");
+VMail.App.personality = JSON.parse(htmlDecode("{{personality}}"));
+VMail.App.morality = JSON.parse(htmlDecode("{{morality}}"));
+VMail.App.demographics = JSON.parse(htmlDecode("{{demographics}}"));
+VMail.App.version = JSON.parse(htmlDecode("{{version}}"));
+VMail.App.working = {{working}};
+
+</script>
+
+{% end %}

@@ -1,0 +1,96 @@
+{% extends "../base.html" %}
+
+{% block body %}
+
+<style>
+.error_box {
+	background: #FAD3C4;
+	border: 1px solid #A75B4E;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	color: #444444;
+	display: none;
+	font-size: 13px;
+	margin: auto;
+	padding: 8px 8px;
+	width: 400px;
+}
+</style>
+<div id="box">
+     <div class="landing_slab" style="border-top:none;">
+      <a href="/"><img class="logo" src="/static/images/logo.png"/></a>
+      <div class="landing_header">Create a study</div>
+  <form name="studyForm" id="studyForm" action="/study/create" method="post">
+  	<table align="center">
+  		<tr>
+  			<td align="right">Study name :</td>
+  			<td align="left"><input type="text" name="study_name" size="30"></input></td>
+  		</tr>
+  		<tr>
+  			<td align="right">Email of administrator:</td>
+  			<td align="left"><input type="text" name="study_email" size="30"></input></td>
+  		</tr>
+  		<tr>
+  			<td align="right">Retype email:</td>
+  			<td align="left"><input type="text" name="study_email2" size="30"></input></td>
+  		</tr>
+  		<tr>
+  			<td align="right">Study description :</td>
+  			<td align="left"><textarea type="text" name="study_description" style="width:250px;height:150px;"></textarea></td>
+  		</tr>
+  		<tr>
+  			<td colspan="2"><input style="padding:10px" type="submit" value="Create study"></td>
+  		</tr>
+  	</table>
+  </form>
+  <div class="error_box"></div>
+  <div id="footer" style="margin-top:30px">
+    <div id="signoff">&copy; 2013 <a href="http://macroconnections.media.mit.edu">Macro Connections</a>&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;<a href="http://media.mit.edu">MIT Media Lab</a></div>
+  </div>
+</div>
+
+<!-- CLIENT-SIDE FORM VALIDATION -->
+<script>
+	var validator = new FormValidator('studyForm', [{
+    name: 'study_name',
+    display: 'Name',    
+    rules: 'required'
+	},{ 
+    name: 'study_description',
+    display: 'Description',    
+    rules: 'required'
+	},{ 
+    name: 'study_email',
+    display: 'Email of study administrator',    
+    rules: 'required|valid_email'
+	},{
+	name: 'study_email2',
+    display: 'Retype email',    
+    rules: 'required|valid_email|matches[study_email]'
+	}
+	], function(errors, event) {
+	    if (errors.length > 0) {
+	       var errorString = '<ul>';
+	        for (var i = 0, errorLength = errors.length; i < errorLength; i++) {
+	            errorString += '<li>' + errors[i].message + '</li>';
+	        }
+	        errorString += "</ul>"
+	        $('.error_box').show();
+	        $('.error_box').html(errorString);
+	    } else {
+	    	event.preventDefault();
+		    var frm = $('#studyForm');
+		    $.ajax({
+		        type: frm.attr('method'),
+		        url: frm.attr('action'),
+		        data: frm.serialize(),
+		        success: function (data) {
+		           console.log(data);
+		    	}
+		    });
+		}
+	});
+</script>
+
+{% end %}

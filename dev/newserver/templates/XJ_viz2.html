@@ -1,0 +1,263 @@
+{% extends "XJ_base.html" %}
+
+{% block body %}
+{% if context['exhibit'] %}
+<iframe id="myIFrame" width="0" height="0" style="display:none;"></iframe>
+{% end %}
+<!-- REQUIRED LIBS -->
+<script src="/static/js/libs/addressparser2.js"></script>
+<script src="/static/js/libs/webtoolkit.base64.js"></script>
+<script src="/static/js/libs/canvg.js"></script>
+<script src="/static/js/libs/jsnetworkx.js"></script>
+<script src="/static/js/libs/rgbcolor.js"></script>
+
+<!-- OUR LIBS -->
+<script>
+//###### Report errors back to server ###########
+window.onerror = function (errorMsg, url, lineNumber) {
+  var data = {
+    'errorMsg': errorMsg,
+    'url': url,
+    'lineNumber': lineNumber
+  };
+  $.post('/senderror', { 'json': JSON.stringify(data) });
+  return false;
+};
+//#########################################
+
+//### fix console is undefined in IE7/8 ###
+if (!window.console) {
+  console = {log: function() {}};
+}
+//##################################
+</script>
+<script src="/static/js/graph.js"></script>
+<script src="/static/js/XJ_viz.js"></script>
+<script src="/static/js/db.js"></script>
+<script src="/static/js/XJ_app_multi.js"></script>
+
+<div id="loader">Collecting metadata...</div>
+
+<div id="runway" style="display:none;text-align:center;margin:0 auto 0 auto;width:500px;">
+    <img id="user_pic" class="runway_item"></img>
+    <div id="user_name" class="runway_item"></div>
+    <div id="user_email" class="runway_item"></div>
+    <div id="user_totalemails" class="runway_item"></div>
+    <div id="user_fetchedcount" class="runway_item"></div>
+    <div id="user_queue" class="runway_item"></div>
+</div>
+
+<div id="greetings" style="display:none;padding-left: 40px;">
+  <div class="landing_slab">
+    <div class="landing_header">Collecting metadata...</div>
+    <div id="logout_inner">
+      <div>Please wait while we're collecting your metadata.</div>
+      <br/>
+      <div style="font-size:20px;">Approx. wait time: <strong>{{waittime}} min.</strong></div>
+      <br/>
+      <div>This page will refresh every 10 seconds.</div>
+
+      
+    </div>
+  </div>
+
+    <div id="footer">
+      <div id="signoff">&copy; 2013 <a href="http://macroconnections.media.mit.edu">Macro Connections</a>&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;<a href="http://media.mit.edu">MIT Media Lab</a></div>
+    </div>
+</div>
+<div id="logout">
+      {% if studyid == 0 %}
+      <a id="logout_save" href="#">log out <i><b>&amp; save</b></i></a> •
+      <a id="logout_delete" href="#">log out <i><b>&amp; delete</b></i></a>
+      {% else %}
+      <a id="logout_save" href="#">log out</a>
+      {% end %}
+      
+</div>
+<div id="data" style="display:none">
+  <div class="column" id="centercolumn">
+    <div><svg id="network" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"></svg></div>
+    <canvas id="networkcanvas" style="display:none;"></canvas>
+    <div id="timeline">
+      <div id="slider-timeslice">
+        <div id="slider-duration"></div>
+        <div id="slider-text"></div>
+      </div>
+      <div id="timeperiods">
+        <a id="slider-all" class="timechoice" href="#">All</a> • <a id="slider-ytd" class="timechoice" href="#">Past Year</a> • <a id="slider-pastmonth" class="timechoice" href="#">Past Month</a> • <a id="slider-pastweek" class="timechoice" href="#">Past Week</a>
+      </div>
+      <div id="play_timeline"><img id="play_button" src="/static/images/play_button.png"></div>
+      <div id="slider-range"></div>
+    </div>
+    <!--<div id="slider-range"></div>-->
+  </div>
+
+  <div class="column" id="leftcolumn">
+    <div id="searchbox" class="ui-widget">
+      <label for="searchContacts" class="heading2">Lookup Contacts </label>
+      <br/>
+      <input id="searchContacts" />
+    </div>
+    <div id="network-controls">
+      <table>
+        <tr>
+          <td class="leftcell">Charge</td>
+          <td class="rightcell"><div id="slider-charge"></div></td>
+        </tr>
+        <tr>
+          <td class="leftcell">Nodes</td>
+          <td class="rightcell">
+            <table style="width:100%;">
+              <tr>
+                <td>0</td><!--<td>[A]</td>-->
+                <td style="width:90%;"><div id="slider-nodes"></div></td>
+                <td id="node_max">[A]</td><!--<td>[S]</td>-->
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td class="leftcell">Links</td>
+          <td class="rightcell">
+            <table style="width:100%;">
+              <tr>
+                <td>[Q]</td>
+                <td style="width:90%;"><div id="slider-links"></div></td>
+                <td>[W]</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div id="org_or_person">
+    <div class="heading2">Nodes as </div>
+    <a href="#" id="as_orgs" onclick="VMail.App.org_or_person(true, false);">Orgs</a>   <a id="as_people" href="#" onclick="VMail.App.org_or_person(false, true);">People</a>
+    </div>
+    <div id="see_members">
+      <div class="heading2">See</div>
+      <a id="as_no" href="#" onclick="VMail.App.see_members(false, false, true);">All</a>   <a href="#" id="as_half" onclick="VMail.App.see_members(false, true, false);">Shared</a>   <a href="#" id="as_yes" onclick="VMail.App.see_members(true, false, false);">Members</a>
+    </div>
+    <div id="color_method">
+      <div class="heading2">Coloring nodes by</div>
+      <a href="#" id="communities" onclick="VMail.App.color_method(true, false);">Communities</a>   <a id="people" href="#" onclick="VMail.App.color_method(false, true);" class="selectedlink">People</a>
+    </div>
+    <div id="snapshot_holder">
+        <div class="heading2">Take a snapshot</div>
+       - <a href="#" id="email_net_link"> with labels</a></br>
+       - <a href="#" id="email_net_notext_link"> without labels</a>
+    </div>
+    <div id="feedback_module">
+      <div class="heading2">Feedback?</div>
+      <a id="compose" href="#" onclick="feedback_action();">Compose</a>
+      <form id="feedback_form">
+        <textarea id="feedback_text" rows="5" cols="20"></textarea><br>
+        <input type="submit" value="Send">
+      </form>
+    </div>
+  </div>
+  <div class="column" id="rightcolumn">
+    <div id="userinfopanel">
+      <div id="name" class="person_name"></div>
+      <div class="leftstack">
+        <img id="userpic" class="userpic_circle"/>
+      </div>
+      <div class="leftstack">
+        <div class="infolevel2" id="ncontacts"></div>
+        <div class="infolevel2" id="totalemails"></div>
+      </div>
+      <div class="infolevel3">
+          <a href="#" id="my_stats" onclick="VMail.App.toggleinfo(true, false);">My Stats</a>   <a id="top_collaborators" href="#" onclick="VMail.App.toggleinfo(false, true);">Top Collaborators</a>
+        </div>
+    </div>
+    <br/>
+    <div id="rankings" style="display:none">
+      <!--<div style='margin-bottom:4px;'><b>Top 15 collaborators</b></div>-->
+      <div class="rankingschoice">
+        <a href="#" id="allTimesLink">All-time</a>    <a id="thisYearLink" href="#">Within time-range</a>
+      </div>
+      <div id="rankings-content"></div>
+    </div>
+
+    <div id="user_stats" class="histograms_container" style="display:none">
+
+    </div>
+
+    <div id="contactDetails" class="histograms_container" style="display:none">
+      <div id="contactDetails-content"></div>
+    </div>
+    
+    <a href="#" id="members" onclick="VMail.App.toggleMemberStats(true, false, false);">Members</a>  
+    <a id="stats" href="#" onclick="VMail.App.toggleMemberStats(false, true, false);">Stats</a>
+    <a id="paths" href="#" onclick="VMail.App.toggleMemberStats(false, false, true);">Connect</a>
+    
+    <div id="selectNodes" class="for_paths" style="display:none">Please select two nodes from the network</div>
+    <div id="first_node" class="for_paths" style="display:none">1&nbsp&nbsp</div>
+    <div id="second_node" class="for_paths" style="display:none">2&nbsp&nbsp</div>
+    <div id="list_paths" class="for_paths" style="display:none"></div>
+    
+  </div>
+  <div id="panel">
+      <div id="panel_left" style="display:none">
+          <img id="panel_img" src="/static/images/arrow_left.png" />
+      </div>
+      <div id="panel_right" style="display:none">
+          <div id="ana_stats" class="histograms_container" style="display:block"></div>
+      </div>
+  </div>
+  <!-- AddThis Button BEGIN -->
+    <div id="socialstuff" class="addthis_toolbox addthis_default_style addthis_32x32_style">
+      <a class="addthis_button_facebook"></a>
+      <a class="addthis_button_twitter"></a>
+      <a class="addthis_button_google_plusone_share"></a>
+      <a class="addthis_button_linkedin"></a>
+    </div>
+  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=undefined"></script>
+  <!-- AddThis Button END -->
+</div>
+
+<script>
+$("#feedback_form").hide();
+
+var version = "{{version}}";
+if(version < 0) setTimeout(function() { location.reload(); }, 10000);
+
+function htmlDecode(value) {
+  return $('<div/>').html(value).text();
+}
+VMail.App.usersinfo = JSON.parse(htmlDecode("{{userinfo}}"));
+VMail.App.userinfo = JSON.parse(htmlDecode("{{userinfo}}"))[0];
+VMail.App.type = htmlDecode("{{type}}");
+
+VMail.App.version = JSON.parse(htmlDecode("{{version}}"));
+VMail.App.working = {{working}};
+
+function feedback_action() {
+  if($('#compose').html() == "Compose") {
+    $('#compose').html("Cancel");
+    $('#feedback_form').show();
+  }
+  else {
+    $('#feedback_form').hide();
+    $('#compose').html("Compose");
+  }
+}
+
+$("#feedback_form").submit(function() {
+  var datastring = "feedback_text=" + $("#feedback_text").val();
+  $.ajax({
+    type: "POST",
+    url: '/feedback',
+    data: datastring,
+    success: function() {
+      feedback_action();
+      $('#loader').html("Sent. Thanks for your feedback!")
+      $('#loader').fadeIn('fast');
+      setTimeout(function() {$("#loader").fadeOut('fast');}, 3000);
+    }
+  });
+  return false;
+});
+</script>
+
+{% end %}
