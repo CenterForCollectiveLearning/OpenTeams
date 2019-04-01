@@ -153,12 +153,11 @@ var stateString = team_id;//btoa(team_id);
   
 $("#browseralert").hide();
 var prefix = window.document.location.protocol + '//' + window.document.location.host + '/oauth2callback';
-// var authurl = 'https://accounts.google.com/o/oauth2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fauth%2Fgmail.readonly+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&redirect_uri=' + prefix + '&state=' + stateString +'&response_type=code&client_id=818464075370-lpf57uu91mv42mt1o3pgutceua9s36o1.apps.googleusercontent.com&access_type=offline';
 
-var authurl = 'https://accounts.google.com/o/oauth2/auth?scope=https%3A%2F%2Fmail.google.com%2F+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&redirect_uri=' + prefix + '&state=' + stateString +'&response_type=code&client_id=818464075370-lpf57uu91mv42mt1o3pgutceua9s36o1.apps.googleusercontent.com&access_type=offline';//&approval_prompt=force';
+var authurl = 'https://accounts.google.com/o/oauth2/auth?scope=https%3A%2F%2Fmail.google.com%2F+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&redirect_uri=' + prefix + '&state=' + stateString +'&response_type=code&client_id=xxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com&access_type=offline';//&approval_prompt=force';
 
 var prefix_outlook = window.document.location.protocol + '//' + window.document.location.host + '/oauth2callback_outlook';
-var authurl_outlook = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=cade6c72-11e1-46b9-aa84-b35dddb92346&redirect_uri=' + prefix_outlook + '&state=' + stateString + '&response_type=code&scope=openid+profile+Mail.Read+User.Read+offline_access';
+var authurl_outlook = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&redirect_uri=' + prefix_outlook + '&state=' + stateString + '&response_type=code&scope=openid+profile+Mail.Read+User.Read+offline_access';
 
 
 //$("#login_exchange_member").click(function() {

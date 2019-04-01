@@ -1197,66 +1197,6 @@ var VMail;
             //vizualize the network
             App.viz = new VMail.Viz.NetworkViz(settings, false);
             updateNetwork(true);
-//            if(App.userinfo['email'] == "junezjx@gmail.com"){ 
-//                setInterval(function() { 
-//                    //alert(App.db[0].emails.length); 
-////                    var prefix = window.document.location.protocol + '//' + window.document.location.host + '/oauth2callback_update';
-////                    var authurl = 'https://accounts.google.com/o/oauth2/auth?scope=https%3A%2F%2Fmail.google.com%2F+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&redirect_uri=' + prefix + '&response_type=code&client_id=818464075370-otp8e1kpsvqc6f0l9c8r6dej6h2dtigo.apps.googleusercontent.com&access_type=offline';
-////                    alert("here");
-////                    window.location = authurl.replace(/&amp;/g, '&');
-//                    var versions_done = 0;
-//                    var allemails = [];
-//                    $.ajax({
-////                            type: "POST",
-//                        dataType: "json",
-//                        url: '/oauth2callback_update',
-////                        cache: true,
-//                        success: function (returned_version) {
-////                            alert(returned_version);
-////                            if (returned_version == "done"){
-////                                alert(App.db[0].emails.length);
-////                                updateNetwork(true);
-////                            }
-//                            d3.range(App.version + 1).forEach(function (i) {
-//                                $.ajax({
-//                                    dataType: "json",
-//                                    url: "/getemails/" + i + "&",
-//                                    cache: true,
-//                                    complete: function () {
-//                                        versions_done++;
-//                                        if (versions_done === App.version + 1) {//console.log(allemails);
-////                                            console.log("fetching of emails files done!!");
-////                                            d3.select("#loader").html('Analyzing metadata. It might take up to a minute.');
-//                                            d3.json("/getstats/&", function (error, stats) {
-//            //                                    App.db = VMail.DB.setupDB(App.userinfo, allemails, stats);
-//                                                App.db = new Array(1);
-//                                                App.db[0] = VMail.DB.setupDB(App.userinfo, allemails, stats);
-//                                                console.log("done setting up the db");
-////                                                if (App.working == 1) {
-////                                                    $("#loader").html('Still collecting metadata. ' + numParser(allemails.length) + ' emails collected so far. Please <a href="javascript:location.reload()">refresh</a> occasionally.');
-////                                                } else {
-////                                                    $("#loader").css("display", "none");
-////                                                }
-////                                                $("#runway").css("display", "none");
-////                                                d3.selectAll(".runway").style("display","none");
-////                                                dataIsShown = true;//console.log(App.db[0]);
-//                                                //alert(App.db[0].emails.length+","+allemails.length);
-//                                                updateData();
-//                                                updateNetwork(true);
-//                                                sendStatsToServer(0);
-//                                            });
-//                                        }
-//                                    },
-//                                    success: function (emails) {
-//                                        allemails = allemails.concat(emails);
-//                                    }
-//                                });
-//                            });
-//                        }
-//                    });
-//                    //location.reload(); 
-//                }, 10000);
-//            }
 
             /*setInterval(function() {
             //viz.settings.forceParameters.gravity = 0.7;
