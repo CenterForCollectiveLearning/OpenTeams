@@ -1,6 +1,6 @@
 # openteam
 
-Authentication data in the project have been. Replaced with xxxxxx. They are:
+Authentication data in the project have been replaced with xxxxxx. They are:
 
 1. client_id and client_secret in dev/newserver/client_secrets.json
 2. client_id and client_secret in dev/newserver/client_secrets_outlook.json
