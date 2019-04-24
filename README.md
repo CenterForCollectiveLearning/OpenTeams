@@ -1,4 +1,4 @@
-# openteams
+# OpenTeams
 
 
 Run ./teams-startup.sh to start the project.
