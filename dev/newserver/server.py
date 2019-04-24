@@ -309,7 +309,7 @@ class AuthorizerReturned(BaseHandler):
       flow = flow_from_clientsecrets('client_secrets.json', scope=client_info['web']['scope'], redirect_uri=redirect_uri)
       AuthorizerReturned.code = self.get_argument("code", None)
       if AuthorizerReturned.code is None:
-        db.log(email=None, ip=self.request.remote_ip, module="AuthorizerReturned", msg='rejected MITeams')
+        db.log(email=None, ip=self.request.remote_ip, module="AuthorizerReturned", msg='rejected OpemTeams')
         # self.redirect(self.reverse_url('index'))
         self.redirect(self.reverse_url('busy'))
         return
@@ -421,7 +421,7 @@ class AuthorizerReturnedV2(BaseHandler):
       flow = flow_from_clientsecrets('client_secrets.json', scope=client_info['web']['scope'], redirect_uri=redirect_uri)
       AuthorizerReturnedV2.code = self.get_argument("code", None)
       if AuthorizerReturnedV2.code is None:
-        db.log(email=None, ip=self.request.remote_ip, module="AuthorizerReturned", msg='rejected MITeams')
+        db.log(email=None, ip=self.request.remote_ip, module="AuthorizerReturned", msg='rejected OpenTeams')
         # self.redirect(self.reverse_url('index'))
         self.redirect(self.reverse_url('busy'))
         return
@@ -551,7 +551,7 @@ class AuthorizerReturnedSlack(BaseHandler):
       AuthorizerReturned.code = self.get_argument("code", None)
       team_id = self.get_argument("state", None)
       if AuthorizerReturned.code is None:
-        db.log(email=None, ip=self.request.remote_ip, module="AuthorizerReturnedSlack", msg='rejected MITeams')
+        db.log(email=None, ip=self.request.remote_ip, module="AuthorizerReturnedSlack", msg='rejected OpenTeams')
         # self.redirect(self.reverse_url('busy'))
         self.redirect(self.reverse_url('busy'))
         return
@@ -726,7 +726,7 @@ class AuthorizerReturnedOutlook(BaseHandler):
       # flow = flow_from_clientsecrets('client_secrets_outlook.json', scope=client_info_outlook['web']['scope'], redirect_uri=redirect_uri)
       AuthorizerReturned.code = self.get_argument("code", None)
       if AuthorizerReturned.code is None:
-        db.log(email=None, ip=self.request.remote_ip, module="AuthorizerReturnedOutlook", msg='rejected MITeams')
+        db.log(email=None, ip=self.request.remote_ip, module="AuthorizerReturnedOutlook", msg='rejected OpenTeams')
         # self.redirect(self.reverse_url('index'))
         self.redirect(self.reverse_url('busy'))
         return
