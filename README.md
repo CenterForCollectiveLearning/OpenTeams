@@ -17,10 +17,12 @@ Authentication data in the project have been replaced with xxxxxx. They are:
 12. client_id in authurl in dev/newserver/templates/gmail/busy.html
 
 
+
 Run ./teams-startup.sh to start the project.
 
 
-——————-————————— Core stack ————-———-————-———
+
+——————-———————————————-————————— Core stack ————-———-————-—————————-—————————
 
 Server-side Programing
 - Operating System: Ubuntu 16.04
@@ -40,7 +42,9 @@ Communication
   - Tornado RESTful API
   - Data Format: JSON
 
-——————————-— Security/User Administration ———-———————
+
+
+——————————-———————-————————— Security/User Administration ———-—————————————-—————————
 
 Server-side
 - Security Protocol for the server: SSL
@@ -54,11 +58,15 @@ Client-side
   - Outlook: OAuth 2.0 protocol in Outlook REST API
 - Rooms can only be joined with the password set by the admin of the room (the person who created the room). Amin should share the password securely to the other members he/she invites to the room.
 
-———————-—————-——— Logging ————————-—-——————
+
+
+———————-—————-—————————-————————— Logging ————————-—-————————————-—————————
 
 User activities are logged in the MongoDB document logging.
 
 
-—————————-—-—— External Data Sources ——————-——————
+
+
+—————————-—-————————-————————— External Data Sources ——————-————————————-—————————
 - Big Five Personality Survey: https://www.outofservice.com/bigfive/info/ 
 - Moral Foundations Survey: http://www.yourpersonality.net/political/griffin1.pl 
