@@ -15,6 +15,15 @@ body
   color: #ffffff;
 }
 
+#intro{
+  position: absolute;
+  float: left;
+  width: 100%;
+  top: 100%;
+  color: #000;
+  margin-top: 100px;
+}
+
 svg text{
   /*fill: #ffffff;*/
   font-family: 'Lato', sans-serif;
@@ -1464,10 +1473,52 @@ u
 }
 
 #about_inner {
+  position: relative;
+  float: left;
   width: 80%;
-  min-height: 300px;
-  margin-left: auto;
+  min-height: 100px;
+  margin-left: 10%;
   margin-right: auto;
+}
+
+.intro2{
+  position: relative;
+  float: left;
+  left: 0;
+  width: 46%;
+  padding: 2%;
+  padding-bottom: 50px;
+  padding-top: 10px;
+  text-align: left;
+}
+
+.intro3{
+  position: relative;
+  float: left;
+  left: 0;
+  width: 31%;
+  padding: 1%;
+  padding-bottom: 50px;
+  padding-top: 10px;
+  text-align: left;
+}
+
+.intro4{
+  position: relative;
+  float: left;
+  left: 0;
+  width: 23%;
+  padding: 1%;
+  padding-bottom: 50px;
+  padding-top: 10px;
+  text-align: left;
+}
+
+.img_intro{
+  position: relative;
+  float: left;
+  width: 100%;
+  margin-bottom: 15px;
 }
 
 #team_inner {
@@ -1499,8 +1550,8 @@ u
 
 .logo {
   margin-top: 40px;
-  width: 300px;
-  height: 60px;
+  width: 400px;
+  /*height: 60px;*/
   text-align: center;
 }
 
@@ -1574,7 +1625,7 @@ u
   margin-top: 20px;
   font-size: 35px;
   font-weight: 300;
-  font-style: italic;
+  /*font-style: italic;*/
   margin-bottom: 30px;
 }
 
