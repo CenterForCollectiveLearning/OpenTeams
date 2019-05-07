@@ -16,12 +16,12 @@ body
 }
 
 #intro{
-  position: absolute;
+  position: relative;
   float: left;
   width: 100%;
   top: 100%;
   color: #000;
-  margin-top: 100px;
+  margin-top: 150px;
 }
 
 svg text{
@@ -3754,8 +3754,9 @@ select#ySelect{
   background: rgb(70,70,70);
 }
 #create_footer {
-  position: absolute;
-  bottom: 0%;
+  position: relative;
+  float: left;
+  top: 0%;
   width: 100%;
   height: 40px;
 }
@@ -3799,8 +3800,8 @@ a.new_name_create_team {
 }*/
 #immersion_teams_mainlogo{
   margin-top: 6%;
-  margin-left: 38%;
-  width: 24%;
+  margin-left: 39%;
+  width: 22%;
   opacity: 1.0;    
 }
 #main_intro{
@@ -3815,14 +3816,14 @@ a.new_name_create_team {
 }
 #ports{
   width: 60%;
-  margin-left: 20%;
-  margin-top: 5%;
+  margin-left: 22%;
+  margin-top: 3%;
 }
 .one_port {
   position: relative;
   float: left;
-  width: 12vw;
-  height: 12vw;
+  width: 11vw;
+  height: 11vw;
   margin-right: 6%;
   margin-top: 40px;
   border-radius: 50%;
@@ -3831,7 +3832,7 @@ a.new_name_create_team {
   text-align: center;
   border: 1px solid white;
   color: rgb(241, 236, 248);
-  font-size: 2vw;
+  font-size: 1.8vw;
   font-weight: 300;
   font-family: 'Lato', sans-serif;
   cursor: pointer;
@@ -3858,10 +3859,10 @@ a.new_name_create_team {
   font-weight: 400;
 }
 .port_inner{
-  margin-top: 4vw;
+  margin-top: 3.5vw;
 }
 .port_subtitle{
-  font-size: 1.3vw;
+  font-size: 1.2vw;
   font-style: normal;
 }
 
