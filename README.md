@@ -1,5 +1,10 @@
 # OpenTeams
 
+OpenTeams is an open source suite for visualizing team data. You can try a demo version of openteams at openteam.info. 
+
+OpenTeams was developed by Jingxian Zhang as part of her Master thesis at the Collective Learning group at the MIT Media Lab, under the supervision of Professor Cesar Hidalgo. 
+
+You can use this repository to install your own private version of open teams in a local server. 
 
 Run ./teams-startup.sh to start the project.
 
@@ -18,8 +23,6 @@ Authentication data in the project have been replaced with xxxxxx. They are:
 10. client_id in authurl in dev/newserver/templates/v2teamJoin.html
 11. client_id in authurl in dev/newserver/templates/dotest.html
 12. client_id in authurl in dev/newserver/templates/gmail/busy.html
-
-
 
 ——————-———————————————- Core stack ————-———-————-—————————
 
