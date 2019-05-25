@@ -2,7 +2,7 @@
 
 OpenTeams is an open source suite for visualizing team data. You can try a demo version of openteams at openteam.info. 
 
-OpenTeams was developed by Jingxian Zhang as part of her Master thesis at the Collective Learning group at the MIT Media Lab, under the supervision of Professor Cesar Hidalgo. 
+OpenTeams was developed by Jingxian Zhang as part of her Master thesis at the Collective Learning group at the MIT Media Lab, under the supervision of Professor Cesar Hidalgo. OpenTeams builds on the workd done in Immersion, a project to visualize individual email metadata created at the MIT Media Lab by Daniel Smilkov and Deepak Jagdish under the direction of Professor Cesar Hidalgo. Xiaojiao Chen and Diana Orghian also contributed to OpenTeams by helping, respectively, with graphic design and social psychology expertise.
 
 You can use this repository to install your own private version of open teams in a local server. 
 
