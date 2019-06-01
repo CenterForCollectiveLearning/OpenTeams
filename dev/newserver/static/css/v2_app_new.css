@@ -21,7 +21,7 @@ body
   width: 100%;
   top: 100%;
   color: #000;
-  margin-top: 150px;
+  margin-top: 160px;
 }
 
 svg text{
@@ -1519,13 +1519,15 @@ u
   float: left;
   width: 100%;
   margin-bottom: 15px;
+  border: 1px solid #ccc;
 }
 
 #team_inner {
   width: 80%;
-  min-height: 480px;
+  min-height: 380px;
   margin-left: auto;
   margin-right: auto;
+  padding-bottom: 90px;
 }
 
 #team_inner_leak {
@@ -1563,12 +1565,12 @@ u
 
 .team_member {
   display: inline-table;
-  width: 28%;
-  min-height: 120px;
+  width: 23%;
+  min-height: 500px;
   /*height: auto !important;*/
-  height: 130px;
+  height: 120px;
   border-radius: 3px;
-  background-color: white;
+  background-color: black;
   margin-right: 5px;
   margin-left: 5px;
   font-size: 14px;
@@ -1620,6 +1622,18 @@ u
 }
 
 .landing_header {
+  width: 100%;
+  text-align: center;
+  margin-top: 30px;
+  font-size: 35px;
+  font-weight: 300;
+  /*font-style: italic;*/
+  margin-bottom: 30px;
+}
+
+.team_header {
+  position: relative;
+  float: left;
   width: 100%;
   text-align: center;
   margin-top: 20px;
